@@ -1,0 +1,68 @@
+# #################################################################
+# # Spring Boot & General Java/Gradle/Maven
+# #################################################################
+
+# Spring Boot Initializr에서 생성된 도움말 파일
+HELP.md
+
+# 빌드 결과물 (Build Artifacts)
+.gradle
+build/
+out/
+target/
+
+# gradle-wrapper.jar는 버전 통일을 위해 제외하지 않음
+!gradle/wrapper/gradle-wrapper.jar
+
+# 로그 파일 (Log Files)
+*.log
+logs/
+
+# Spring Boot DevTools 재시작 트리거 파일
+.spring-boot-devtools.properties
+
+# 민감 정보 및 로컬 설정 파일 (Secrets and Local Configs)
+# application-local.properties, application-dev.yml 등 로컬 환경 전용 설정 파일
+application-local.*
+resources/application.properties
+
+# #################################################################
+# # IDE & Editor Specific
+# #################################################################
+
+### IntelliJ IDEA ###
+.idea/
+*.iml
+*.iws
+*.ipr
+
+### Spring Tool Suite / Eclipse ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+
+### Visual Studio Code ###
+.vscode/
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+# #################################################################
+# # OS-generated files
+# #################################################################
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
