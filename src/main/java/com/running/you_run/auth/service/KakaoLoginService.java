@@ -7,6 +7,8 @@ import com.running.you_run.auth.payload.dto.TokenDto;
 import com.running.you_run.auth.repository.UserRepository;
 import com.running.you_run.auth.util.KakaoApiClient;
 import com.running.you_run.auth.util.TokenProvider;
+import com.running.you_run.global.exception.ApiException;
+import com.running.you_run.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -33,13 +35,14 @@ public class KakaoLoginService {
 
         // 2. 회원 확인 및 가입 (비즈니스 로직)
         User user = userRepository.findUserByEmail(email)
-                .orElseGet(() -> {
-                    User newUser = User.builder()
-                            .email(email)
-                            .role(UserRole.USER)
-                            .build();
-                    return userRepository.save(newUser);
-                });
+                .orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_EXIST));
+//                .orElseGet(() -> {
+//                    User newUser = User.builder()
+//                            .email(email)
+//                            .role(UserRole.USER)
+//                            .build();
+//                    return userRepository.save(newUser);
+//                });
         return tokenProvider.createToken(user.getEmail(), user.getRole().toString());
     }
 
