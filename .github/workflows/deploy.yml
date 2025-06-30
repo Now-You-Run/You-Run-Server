@@ -1,0 +1,12 @@
+# .github/workflows/deploy.yml (main 브랜치에 있는 초기 버전)
+name: Deploy to Server v1
+
+on:
+  workflow_dispatch: # 수동 실행을 위해 추가
+
+jobs:
+  initial-setup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Placeholder step
+        run: echo "This is the placeholder workflow."
