@@ -24,7 +24,6 @@ logs/
 # 민감 정보 및 로컬 설정 파일 (Secrets and Local Configs)
 # application-local.properties, application-dev.yml 등 로컬 환경 전용 설정 파일
 application-local.*
-src/main/resources/application.properties
 
 # #################################################################
 # # IDE & Editor Specific
