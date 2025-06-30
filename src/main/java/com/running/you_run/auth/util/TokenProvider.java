@@ -1,5 +1,6 @@
 package com.running.you_run.auth.util;
 
+import com.running.you_run.auth.Enum.UserRole;
 import com.running.you_run.auth.payload.dto.TokenDto;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
@@ -49,14 +50,14 @@ public class TokenProvider {
     /**
      * 사용자 정보(이메일, 역할)를 기반으로 Access Token과 Refresh Token을 생성합니다.
      */
-    public TokenDto createToken(String email, String role) {
+    public TokenDto createToken(String email, UserRole role) {
         long now = (new Date()).getTime();
 
         // Access Token 생성
         Date accessTokenExpiresIn = new Date(now + this.accessTokenValidityMilliSeconds);
         String accessToken = Jwts.builder()
                 .setSubject(email) // 표준 클레임인 subject에 이메일 저장
-                .claim(AUTHORITIES_KEY, role) // 커스텀 클레임으로 권한 정보 저장
+                .claim(AUTHORITIES_KEY, role.toString()) // 커스텀 클레임으로 권한 정보 저장
                 .setExpiration(accessTokenExpiresIn)
                 .signWith(key, SignatureAlgorithm.HS512) // HS256보다 강력한 HS512 권장
                 .compact();
