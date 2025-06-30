@@ -1,11 +1,10 @@
 name: Deploy Spring Boot to EC2
 
-# on:
-#   push:
-#     branches:
-#       - develop
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - develop
 
 # 환경 변수 설정
 env:
