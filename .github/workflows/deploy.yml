@@ -17,8 +17,8 @@ jobs:
   # 1. Docker 이미지를 빌드하고 ECR에 푸시하는 Job
   build-and-push:
     runs-on: ubuntu-latest
-    outputs:
-      image_tag: ${{ steps.image.outputs.tag }}
+#    outputs:
+#      image_tag: ${{ steps.image.outputs.tag }}
     steps:
       # 1.1 소스 코드를 체크아웃합니다.
       - name: Checkout source code
@@ -71,7 +71,18 @@ jobs:
             
             # ECR에 로그인합니다. (서버에도 AWS CLI가 설치되어 있고 자격 증명이 설정되어 있어야 함)
             aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com
-            echo "SPRING_IMAGE=${{ needs.build-and-push.outputs.image_tag }}" > .env
+            
+            # 1. 현재 워크플로우의 커밋 해시(태그)를 가져옵니다.
+            IMAGE_TAG=${{ github.sha }}
+            
+            # 2. ECR 리포지토리의 기본 주소를 만듭니다.
+            ECR_REGISTRY=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com
+            
+            # 3. 배포할 이미지의 전체 경로를 완성합니다.
+            FULL_IMAGE_NAME=${ECR_REGISTRY}/${{ env.ECR_REPOSITORY }}:${IMAGE_TAG}
+            
+            # 4. 완성된 이미지 경로를 .env 파일에 기록합니다.
+            echo "SPRING_IMAGE=${FULL_IMAGE_NAME}" > .env
             
             # 최신 이미지를 pull 받습니다.
             docker-compose pull spring-app
