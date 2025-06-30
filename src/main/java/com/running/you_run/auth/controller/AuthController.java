@@ -27,8 +27,8 @@ public class AuthController {
     public Response connectionTest(){
         return new Response("201","hi","");
     }
-    @GetMapping("/testa")
+    @GetMapping("/login/test")
     public Response connectionTest2(){
-        return new Response("201","hi","");
+        return new Response("201","hiaaaaaa","");
     }
 }
