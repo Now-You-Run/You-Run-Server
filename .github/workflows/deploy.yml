@@ -16,8 +16,6 @@ jobs:
   # 1. Docker 이미지를 빌드하고 ECR에 푸시하는 Job
   build-and-push:
     runs-on: ubuntu-latest
-#    outputs:
-#      image_tag: ${{ steps.image.outputs.tag }}
     steps:
       # 1.1 소스 코드를 체크아웃합니다.
       - name: Checkout source code
@@ -83,10 +81,4 @@ jobs:
             # 4. 완성된 이미지 경로를 .env 파일에 기록합니다.
             echo "SPRING_IMAGE=${FULL_IMAGE_NAME}" > .env
             
-            # 최신 이미지를 pull 받습니다.
-            docker-compose pull spring-app
-            
-            # 컨테이너를 재시작합니다.
-            # --no-deps: 의존성 없는 서비스는 재시작하지 않습니다.
-            # --force-recreate: 컨테이너를 강제로 재생성하여 새 이미지를 적용합니다.
-            docker-compose up -d --force-recreate spring-app
+            docker-compose up -d --no-deps --force-recreate spring-app
