@@ -47,6 +47,7 @@ jobs:
           context: .
           push: true
           tags: ${{ steps.image.outputs.tag }}
+          no-cache: true
 
   # 2. 서버에 접속하여 이미지를 배포하는 Job
   deploy:
