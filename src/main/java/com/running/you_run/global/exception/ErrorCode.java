@@ -12,7 +12,9 @@ public enum ErrorCode {
     USER_UNAUTHORIZED(HttpStatus.FORBIDDEN, "700-5", "권한이 없습니다."),
 
     TOKEN_INVALID(HttpStatus.UNAUTHORIZED, "701-1", "유효하지 않은 토큰입니다."),
-    TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "701-2", "토큰이 만료되었습니다.");
+    TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "701-2", "토큰이 만료되었습니다."),
+
+    MAP_NOT_EXIST(HttpStatus.BAD_REQUEST,"800-1","없는 트랙입니다.");
 
     private final HttpStatus httpStatus;
     private final String code;
