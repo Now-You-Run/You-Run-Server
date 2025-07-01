@@ -29,6 +29,7 @@ public class SecurityConfig {
                         // JwtFilter의 NO_AUTH_REQUIRED_URLS 와 유사하게 설정
                         .requestMatchers(
                                 "/api/auth/**",
+                                "/api/gps/**",
                                 "/api/public/**",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",

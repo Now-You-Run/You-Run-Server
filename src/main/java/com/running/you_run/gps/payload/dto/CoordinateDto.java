@@ -1,0 +1,9 @@
+package com.running.you_run.gps.payload.dto;
+
+public record CoordinateDto(
+        double latitude,
+        double longitude,
+        String timestamp
+) {
+
+}
