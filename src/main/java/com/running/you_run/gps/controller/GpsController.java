@@ -18,7 +18,7 @@ public class GpsController {
     @PostMapping("/track")
     public ResponseEntity<?> storeTrack(@RequestBody TrackStoreRequest request) {
         trackService.storeTrack(request);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok("success");
     }
 
     @GetMapping("/track")

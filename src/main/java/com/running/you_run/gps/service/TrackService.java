@@ -27,6 +27,7 @@ public class TrackService {
                 .userId(request.getUserId())
                 .path(pathLineString)
                 .timestamp(LocalDateTime.now().toString()) // 혹은 첫 좌표의 timestamp 사용
+                .distance(request.getDistance())
                 .build();
 
         // 3. 데이터베이스에 저장
