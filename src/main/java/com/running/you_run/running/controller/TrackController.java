@@ -1,9 +1,10 @@
-package com.running.you_run.gps.controller;
+package com.running.you_run.running.controller;
 
 import com.running.you_run.global.payload.Response;
-import com.running.you_run.gps.payload.request.RunningTrackStoreRequest;
-import com.running.you_run.gps.payload.response.TrackPathResponse;
-import com.running.you_run.gps.service.TrackService;
+import com.running.you_run.running.payload.request.RunningTrackStoreRequest;
+import com.running.you_run.running.payload.dto.TrackInfoDto;
+import com.running.you_run.running.payload.response.TrackRecordResponse;
+import com.running.you_run.running.service.TrackService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/gps")
 @RestController
 @RequiredArgsConstructor
-public class GpsController {
+public class TrackController {
 
     private final TrackService trackService;
 
@@ -23,7 +24,9 @@ public class GpsController {
 
     @GetMapping("/track")
     public ResponseEntity<?> returnTrack(@RequestParam Long trackId) {
-        TrackPathResponse trackPathResponse = trackService.returnTrack(trackId);
-        return Response.ok(trackPathResponse);
+        TrackRecordResponse trackRecordResponse = trackService.returnTrackRecordResponse(trackId);
+        return Response.ok(trackRecordResponse);
     }
+
+
 }

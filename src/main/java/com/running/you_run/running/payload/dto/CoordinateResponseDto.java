@@ -1,4 +1,4 @@
-package com.running.you_run.gps.payload.dto;
+package com.running.you_run.running.payload.dto;
 
 public record CoordinateResponseDto(
         double latitude,

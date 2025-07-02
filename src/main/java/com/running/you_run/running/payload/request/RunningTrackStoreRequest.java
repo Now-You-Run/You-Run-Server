@@ -1,6 +1,6 @@
-package com.running.you_run.gps.payload.request;
+package com.running.you_run.running.payload.request;
 
-import com.running.you_run.gps.payload.dto.CoordinateDto;
+import com.running.you_run.running.payload.dto.CoordinateDto;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineString;
