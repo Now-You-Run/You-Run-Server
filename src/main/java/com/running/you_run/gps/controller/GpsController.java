@@ -1,7 +1,7 @@
 package com.running.you_run.gps.controller;
 
 import com.running.you_run.global.payload.Response;
-import com.running.you_run.gps.payload.request.TrackStoreRequest;
+import com.running.you_run.gps.payload.request.RunningTrackStoreRequest;
 import com.running.you_run.gps.payload.response.TrackPathResponse;
 import com.running.you_run.gps.service.TrackService;
 import lombok.RequiredArgsConstructor;
@@ -16,9 +16,9 @@ public class GpsController {
     private final TrackService trackService;
 
     @PostMapping("/track")
-    public ResponseEntity<?> storeTrack(@RequestBody TrackStoreRequest request) {
+    public ResponseEntity<?> saveTrack(@RequestBody RunningTrackStoreRequest request) {
         trackService.storeTrack(request);
-        return ResponseEntity.ok("success");
+        return Response.ok("success");
     }
 
     @GetMapping("/track")

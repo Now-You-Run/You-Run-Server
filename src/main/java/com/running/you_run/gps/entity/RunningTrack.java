@@ -2,8 +2,11 @@ package com.running.you_run.gps.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.Type;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.locationtech.jts.geom.LineString;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Getter // Lombok 어노테이션만 유지
@@ -15,12 +18,14 @@ public class RunningTrack {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    private Long userId;
-
+    private String name;
+    private int totalDistance;
+    private double rate;
     @Column(columnDefinition = "geometry(LineString, 4326)")
     private LineString path;
-
-    private String timestamp;
-    private int distance;
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+    @Column(nullable = false)
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
 }
