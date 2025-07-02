@@ -9,7 +9,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public record TrackPathResponse(
-        List<CoordinateResponseDto> path
+        List<CoordinateResponseDto> path,
+        int distance
 ) {
     public static TrackPathResponse convertToResponseDto(RunningTrack track) {
         // LineString에서 좌표 배열을 가져옴
@@ -20,6 +21,6 @@ public record TrackPathResponse(
                 .map(coord -> new CoordinateResponseDto(coord.y, coord.x)) // JTS: y가 위도, x가 경도
                 .collect(Collectors.toList());
 
-        return new TrackPathResponse(pathDto);
+        return new TrackPathResponse(pathDto, track.getDistance());
     }
 }

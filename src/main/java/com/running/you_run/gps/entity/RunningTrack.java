@@ -22,4 +22,5 @@ public class RunningTrack {
     private LineString path;
 
     private String timestamp;
+    private int distance;
 }
