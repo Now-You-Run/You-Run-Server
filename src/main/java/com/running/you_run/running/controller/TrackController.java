@@ -2,14 +2,16 @@ package com.running.you_run.running.controller;
 
 import com.running.you_run.global.payload.Response;
 import com.running.you_run.running.payload.request.RunningTrackStoreRequest;
-import com.running.you_run.running.payload.dto.TrackInfoDto;
+import com.running.you_run.running.payload.response.TrackListResponse;
 import com.running.you_run.running.payload.response.TrackRecordResponse;
 import com.running.you_run.running.service.TrackService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@RequestMapping("/api/gps")
+import java.util.List;
+
+@RequestMapping("/api")
 @RestController
 @RequiredArgsConstructor
 public class TrackController {
@@ -28,5 +30,9 @@ public class TrackController {
         return Response.ok(trackRecordResponse);
     }
 
-
+    @GetMapping("/track/list")
+    public ResponseEntity<?> returnAllTracks() {
+        TrackListResponse trackListResponses = trackService.returnAllTrackRecordResponses();
+        return Response.ok(trackListResponses);
+    }
 }

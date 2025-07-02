@@ -6,9 +6,11 @@ import com.running.you_run.global.exception.ApiException;
 import com.running.you_run.global.exception.ErrorCode;
 import com.running.you_run.running.entity.Record;
 import com.running.you_run.running.entity.RunningTrack;
+import com.running.you_run.running.payload.dto.TrackListItemDto;
 import com.running.you_run.running.payload.dto.TrackRecordDto;
 import com.running.you_run.running.payload.request.RunningTrackStoreRequest;
 import com.running.you_run.running.payload.dto.TrackInfoDto;
+import com.running.you_run.running.payload.response.TrackListResponse;
 import com.running.you_run.running.payload.response.TrackRecordResponse;
 import com.running.you_run.running.repository.RecordRepository;
 import com.running.you_run.running.repository.TrackRepository;
@@ -70,5 +72,11 @@ public class TrackService {
         return new TrackRecordResponse(trackInfoDto, records);
     }
 
+    @Transactional
+    public TrackListResponse returnAllTrackRecordResponses(){
+        List<RunningTrack> allTracks = trackRepository.findAll();
 
+        List<TrackListItemDto> trackListItemDtos = TrackListResponse.convertRunningTracksToTrackListResponse(allTracks);
+        return new TrackListResponse(trackListItemDtos);
+    }
 }
