@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.running.you_run.auth.dto.MyPageSummaryDto;
 
 @RestController
 @RequestMapping("/mypage")
@@ -33,5 +34,15 @@ public class MyPageController {
         return ResponseEntity.ok(created);
     }
 
+    @GetMapping("/{userId}/summary")
+    public ResponseEntity<MyPageSummaryDto> getMyPageSummary(@PathVariable Long userId) {
+        MyPageSummaryDto summary = myPageService.getMyPageSummary(userId);
+        return ResponseEntity.ok(summary);
+    }
 
+    @PostMapping("/profile")
+    public ResponseEntity<UserProfileDto> createProfile(@RequestBody UserProfileDto request) {
+        UserProfileDto createdProfile = myPageService.createUserProfile(request);
+        return ResponseEntity.ok(createdProfile);
+    }
 }

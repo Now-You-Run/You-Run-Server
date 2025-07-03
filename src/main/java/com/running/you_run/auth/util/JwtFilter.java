@@ -34,7 +34,8 @@ public class JwtFilter extends OncePerRequestFilter {
             "/api/public/**",
             "/swagger-ui/**",
             "/v3/api-docs/**",
-            "/favicon.ico"
+            "/favicon.ico",
+            "/mypage/**"
     );
 
     private final AntPathMatcher pathMatcher = new AntPathMatcher();
