@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -26,6 +27,11 @@ public class User {
     @Column
     private String name;
     @Column
+
+    @Setter
+    private String nickname;
+    @Column
+
     private String refreshToken;
     @Column
     private LocalDateTime refreshTokenExpiryDate;
@@ -36,6 +42,7 @@ public class User {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    @Enumerated(EnumType.STRING)
     @Column
     private UserRole role;
 
