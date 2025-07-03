@@ -11,26 +11,26 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RequestMapping("/api")
+@RequestMapping("/api/track")
 @RestController
 @RequiredArgsConstructor
 public class TrackController {
 
     private final TrackService trackService;
 
-    @PostMapping("/track")
+    @PostMapping("")
     public ResponseEntity<?> saveTrack(@RequestBody RunningTrackStoreRequest request) {
         trackService.storeTrack(request);
         return Response.ok("success");
     }
 
-    @GetMapping("/track")
+    @GetMapping("")
     public ResponseEntity<?> returnTrack(@RequestParam Long trackId) {
         TrackRecordResponse trackRecordResponse = trackService.returnTrackRecordResponse(trackId);
         return Response.ok(trackRecordResponse);
     }
 
-    @GetMapping("/track/list")
+    @GetMapping("/list")
     public ResponseEntity<?> returnAllTracks() {
         TrackListResponse trackListResponses = trackService.returnAllTrackRecordResponses();
         return Response.ok(trackListResponses);

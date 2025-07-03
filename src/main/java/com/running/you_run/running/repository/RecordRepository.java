@@ -7,5 +7,6 @@ import java.util.List;
 
 public interface RecordRepository extends JpaRepository<Record, Long> {
     List<Record> findByTrackId(Long trackId);
-
+    List<Record> findAllById(Long id);
+    List<Record> findByUserId(Long userId);
 }

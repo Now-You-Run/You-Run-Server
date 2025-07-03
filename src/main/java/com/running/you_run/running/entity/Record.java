@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Builder
 @Getter
@@ -29,6 +31,7 @@ public class Record {
     @Column(nullable = true)
     private boolean isWinner;
     private int duration;
+    private LocalDateTime date;
 
     public Record() {}
 }
