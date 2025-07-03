@@ -1,6 +1,6 @@
-package com.running.you_run.gps.repository;
+package com.running.you_run.running.repository;
 
-import com.running.you_run.gps.entity.RunningTrack;
+import com.running.you_run.running.entity.RunningTrack;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

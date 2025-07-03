@@ -37,6 +37,7 @@ public class User {
     private LocalDateTime updatedAt;
 
     @Column
+    @Enumerated(EnumType.STRING)
     private UserRole role;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)

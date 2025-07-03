@@ -1,6 +1,7 @@
 package com.running.you_run.auth.config;
 
 import com.running.you_run.auth.util.JwtFilter;
+import com.running.you_run.global.exception.entrypoint.CustomAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,7 +30,8 @@ public class SecurityConfig {
                         // JwtFilter의 NO_AUTH_REQUIRED_URLS 와 유사하게 설정
                         .requestMatchers(
                                 "/api/auth/**",
-                                "/api/gps/**",
+                                "/api/track/**",
+                                "/api/record/**",
                                 "/api/public/**",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
@@ -38,7 +40,11 @@ public class SecurityConfig {
                         ).permitAll() // 이 경로들은 인증 없이 접근 허용
                         .anyRequest().authenticated() // 나머지 모든 요청은 반드시 인증 필요
                 )
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(exception ->
+                        exception.authenticationEntryPoint(new CustomAuthenticationEntryPoint())
+                );
+
 
         return http.build();
     }

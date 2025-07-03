@@ -1,23 +1,18 @@
-package com.running.you_run.gps.payload.request;
+package com.running.you_run.running.payload.request;
 
-import com.running.you_run.gps.payload.dto.CoordinateDto;
-import lombok.Getter;
-import lombok.Setter;
+import com.running.you_run.running.payload.dto.CoordinateDto;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineString;
 
 import java.util.List;
-@Getter
-@Setter
-public class TrackStoreRequest {
-    private Long userId;
-    private List<CoordinateDto> path;
 
-    // 기본 생성자
-    public TrackStoreRequest() {}
-
-    // getter/setter
+public record RunningTrackStoreRequest(
+        String name,
+        int totalDistance,
+        double rate,
+        List<CoordinateDto> path // 좌표 리스트
+) {
     public LineString createLineString() {
         Coordinate[] coords = path.stream()
                 .map(dto -> new Coordinate(dto.longitude(), dto.latitude()))
