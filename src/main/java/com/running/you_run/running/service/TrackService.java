@@ -19,6 +19,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -84,6 +85,7 @@ public class TrackService {
         List<RunningTrack> allTracks = trackRepository.findAll();
 
         List<TrackListItemDto> trackListItemDtos = TrackListResponse.convertRunningTracksToTrackListResponse(allTracks);
+        trackListItemDtos.sort(Comparator.comparingInt(TrackListItemDto::distance));
         return new TrackListResponse(trackListItemDtos);
     }
 }
