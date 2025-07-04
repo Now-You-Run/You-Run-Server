@@ -1,7 +1,7 @@
 package com.running.you_run.auth.repository;
 
-import com.running.you_run.auth.dto.MyPageSummaryDto;
+import com.running.you_run.auth.dto.MyPageDto;
 
 public interface MyPageQueryRepository {
-    MyPageSummaryDto getMyPageSummary(Long userId);
+    MyPageDto getMyPageSummary(Long userId);
 }

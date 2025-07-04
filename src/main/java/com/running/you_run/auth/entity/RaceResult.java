@@ -22,7 +22,8 @@ public class RaceResult {
     private Double resultTime; // 기록 (초)
     private Double pace;       // min/km
     private Integer rank;      // 순위
-
+    private double distance;
+    private double averagePace;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
