@@ -28,13 +28,20 @@ public class TrackService {
     private final TrackRepository trackRepository;
     private final RecordRepository recordRepository;
     private final UserRepository userRepository;
+    private final KakaoGeoService kakaoGeoService;
     @Transactional
     public Long storeTrack(RunningTrackStoreRequest request) {
+        double startLatitude = request.path().get(0).latitude();
+        double startLongitude = request.path().get(0).longitude();
+        String address = kakaoGeoService.getCityDistrict(startLatitude,startLongitude);
         RunningTrack track = RunningTrack.builder()
                 .name(request.name())
                 .totalDistance(request.totalDistance())
                 .rate(request.rate())
                 .path(request.createLineString())
+                .startLatitude(startLatitude)
+                .startLongitude(startLongitude)
+                .address(address)
                 .build();
 
         trackRepository.save(track);

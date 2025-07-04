@@ -26,6 +26,9 @@ public class RunningTrack {
     private double rate;
     @Column(columnDefinition = "geometry(LineString, 4326)")
     private LineString path;
+    private double startLatitude;
+    private double startLongitude;
+    private String address;
     @CreationTimestamp
     private LocalDateTime createdAt;
     @Column(nullable = false)
