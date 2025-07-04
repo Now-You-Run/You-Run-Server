@@ -9,11 +9,13 @@ import java.util.List;
 public record TrackListItemDto(
         Long id,
         String name,
+        int distance,
         List<CoordinateDto> path
+
 ) {
     public static TrackListItemDto from(RunningTrack track){
         List<CoordinateDto> coordinateDtos = CoordinateConverter.convertLineStringToCoordinates(track.getPath());
-        return new TrackListItemDto(track.getId(), track.getName(), coordinateDtos);
+        return new TrackListItemDto(track.getId(), track.getName(), track.getTotalDistance(),coordinateDtos);
     }
 
 }
