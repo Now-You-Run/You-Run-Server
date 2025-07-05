@@ -17,6 +17,9 @@ import java.util.stream.Collectors;
 import jakarta.persistence.PersistenceContext;
 import com.running.you_run.auth.entity.RaceResult;
 import com.running.you_run.auth.dto.RaceResultDto;
+import java.util.Map;
+import java.util.HashMap;
+import jakarta.annotation.PostConstruct;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +27,7 @@ public class MyPageService {
 
     private final UserRepository userRepository;
     private final MyPageQueryRepository myPageQueryRepository;
+    private final Map<Integer, Double> levelDistanceMap = new HashMap<>();
 
     @PersistenceContext
     private EntityManager em;
@@ -139,7 +143,7 @@ public class MyPageService {
         return MyPageDto.builder()
                 .userId(user.getId())
                 .level(user.getLevel())
-                .experience(user.getExperience().intValue())
+                .totalDistance(user.getTotalDistance())
                 .weeklyDistance(weeklyDistance)
                 .averagePace(averagePace)
                 .runningCount(runningCount)
@@ -149,26 +153,88 @@ public class MyPageService {
                 .build();
     }
 
+    @PostConstruct
+    private void initLevelDistanceMap() {
+        double sum = 0;
+        levelDistanceMap.put(1, 0.0);
+        for (int i = 2; i <= 1000; i++) {
+            sum += getDistanceToLevelUp(i - 1);  // (i-1)레벨 -> i레벨 거리 누적
+            levelDistanceMap.put(i, sum);
+        }
+    }
+
     @Transactional
-    public void addExperienceAndLevelUp(Long userId, int exp) {
+    public void addDistanceAndLevelUp(Long userId, double distanceKm) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        double newExp = user.getExperience() + exp;
-        int newLevel = user.getLevel();
+        double totalDistance = (user.getTotalDistance() == null ? 0.0 : user.getTotalDistance()) + distanceKm;
+        int newLevel = calculateLevelByTotalDistanceBinarySearch(totalDistance);
 
-        // 예시: 경험치 100 이상이면 레벨업
-        while (newExp >= 100) {
-            newExp -= 100;
-            newLevel += 1;
-        }
+        System.out.println("==== Level Calculation Debug ====");
+        System.out.println("Total Distance (after run): " + totalDistance);
+        System.out.println("New Level: " + newLevel);
+        System.out.println("Required distance for next level: " + getTotalDistanceForLevel(newLevel + 1));
+        System.out.println("==============================");
 
-        user.setExperience(newExp);
+        user.setTotalDistance(totalDistance);
         user.setLevel(newLevel);
-
+        updateGrade(user, totalDistance);
         userRepository.save(user);
     }
 
+    private void updateGrade(User user, double totalDistance) {
+        if (totalDistance <= 50) {
+            user.setGrade("아이언");
+        } else if (totalDistance <= 100) {
+            user.setGrade("브론즈");
+        } else if (totalDistance <= 150) {
+            user.setGrade("실버");
+        } else if (totalDistance <= 200) {
+            user.setGrade("골드");
+        } else if (totalDistance <= 250) {
+            user.setGrade("플래티넘");
+        } else if (totalDistance <= 300) {
+            user.setGrade("다이아");
+        } else if (totalDistance <= 450) {
+            user.setGrade("마스터");
+        } else if (totalDistance <= 500) {
+            user.setGrade("그랜드 마스터");
+        } else if (totalDistance <= 700) {
+            user.setGrade("레전드 러너");
+        }
+    }
 
+    private int calculateLevelByTotalDistanceBinarySearch(double totalDistance) {
+        int left = 1;
+        int right = 1000;
 
+        while (left < right) {
+            int mid = (left + right + 1) / 2;
+            double requiredDistance = getTotalDistanceForLevel(mid);
+
+            if (totalDistance >= requiredDistance) {
+                left = mid;
+            } else {
+                right = mid - 1;
+            }
+        }
+        return left;
+    }
+
+    private double getTotalDistanceForLevel(int level) {
+        return levelDistanceMap.getOrDefault(level, Double.MAX_VALUE);
+    }
+
+    private double getDistanceToLevelUp(int level) {
+        if (level >= 1 && level <= 10) {
+            return 3.0 * level;
+        } else if (level >= 11 && level <= 50) {
+            return 5.0 * level;
+        } else if (level >= 51 && level <= 100) {
+            return 10.0 * level;
+        } else {
+            return Double.MAX_VALUE;
+        }
+    }
 }

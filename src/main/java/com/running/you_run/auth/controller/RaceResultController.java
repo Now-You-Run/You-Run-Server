@@ -1,7 +1,7 @@
 package com.running.you_run.auth.controller;
 
 import com.running.you_run.auth.dto.RaceResultDto;
-import com.running.you_run.service.RaceResultService;
+import com.running.you_run.auth.service.RaceResultService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -50,26 +50,5 @@ public class RaceResultController {
             @PathVariable Long resultId) {
         RaceResultDto result = raceResultService.getRaceResultById(resultId);
         return ResponseEntity.ok(result);
-    }
-
-    // 레벨업 로직
-    @PostMapping("/{userId}/level")
-    public ResponseEntity<?> saveRaceResult(
-            @PathVariable Long userId,
-            @RequestBody RaceResultDto dto) {
-
-        RaceResult raceResult = RaceResult.builder()
-                .raceName(dto.getRaceName())
-                .raceDate(dto.getRaceDate().atStartOfDay())
-                .resultTime(dto.getResultTime())
-                .pace(dto.getPace())
-                .rank(dto.getRank())
-                .distance(dto.getDistance())
-                .averagePace(dto.getAveragePace())
-                .build();
-
-        raceResultService.saveRaceResult(userId, raceResult);
-
-        return ResponseEntity.ok().build();
     }
 }

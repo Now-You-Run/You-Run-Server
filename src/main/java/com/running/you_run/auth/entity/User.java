@@ -96,32 +96,9 @@ public class User {
 
     @PrePersist
     public void prePersist() {
-        if (this.experience == null) this.experience = 0.0;
         if (this.totalDistance == null) this.totalDistance = 0.0;
-        if (this.totalExperience == null) this.totalExperience = 0.0;
         if (this.level == null) this.level = 1;
-        if (this.grade == null) this.grade = "Beginner";
     }
-
-//    @Setter
-//    @Column
-//    private Integer level;
-//
-//    @Setter
-//    @Column
-//    private Double experience;          // primitive -> 객체 타입, 기본값 0.0
-//
-//    @Setter
-//    @Column
-//    private Double totalDistance;     // 그대로 객체 타입, 기본값 0.0
-//
-//    @Setter
-//    @Column
-//    private Double totalExperience;     // primitive -> 객체 타입, 기본값 0.0
-//
-//    @Setter
-//    @Column
-//    private String grade;
 
     public User() {
 

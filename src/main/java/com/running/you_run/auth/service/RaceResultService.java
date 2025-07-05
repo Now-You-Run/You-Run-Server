@@ -1,19 +1,18 @@
-package com.running.you_run.service;
+package com.running.you_run.auth.service;
 
 import com.running.you_run.auth.dto.RaceResultDto;
+import com.running.you_run.auth.dto.RaceResultSaveDto;
 import com.running.you_run.auth.entity.RaceResult;
 import com.running.you_run.auth.entity.User;
 import com.running.you_run.auth.repository.RaceResultRepository;
 import com.running.you_run.auth.repository.UserRepository;
+import com.running.you_run.auth.service.MyPageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.running.you_run.auth.dto.RaceResultSaveDto;
-import com.running.you_run.auth.service.MyPageService;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import org.springframework.data.jpa.repository.JpaRepository;
 
 @Service
 @RequiredArgsConstructor
@@ -24,7 +23,7 @@ public class RaceResultService {
     private final MyPageService mypageService;
 
     /**
-     * 경기 결과 등록
+     * 경기 결과 등록 및 km 기반 레벨업 처리
      */
     @Transactional
     public RaceResultDto createRaceResult(Long userId, RaceResultSaveDto request) {
@@ -45,36 +44,9 @@ public class RaceResultService {
         RaceResult savedResult = raceResultRepository.save(raceResult);
 
         double distanceKm = request.getDistance();
-        double experienceGained = distanceKm * 10; // 1km = 10exp
 
-        // null 방지 초기화
-        if (user.getTotalDistance() == null) user.setTotalDistance(0.0);
-        if (user.getExperience() == null) user.setExperience(0.0);
-        if (user.getTotalExperience() == null) user.setTotalExperience(0.0);
-        if (user.getLevel() == null) user.setLevel(1);
-        if (user.getGrade() == null) user.setGrade("Beginner");
-
-        user.setTotalDistance(user.getTotalDistance() + distanceKm);
-        user.setExperience(user.getExperience() + experienceGained);
-        user.setTotalExperience(user.getTotalExperience() + experienceGained);
-
-        // 레벨업 처리
-        int expForNextLevel = user.getLevel() * 100;
-        while (user.getExperience() >= expForNextLevel) {
-            user.setExperience(user.getExperience() - expForNextLevel);
-            user.setLevel(user.getLevel() + 1);
-            expForNextLevel = user.getLevel() * 100;
-        }
-
-        // 등급 갱신
-        int level = user.getLevel();
-        if (level <= 5) user.setGrade("Beginner");
-        else if (level <= 10) user.setGrade("Intermediate");
-        else if (level <= 15) user.setGrade("Advanced");
-        else user.setGrade("Elite");
-
-        // User 업데이트
-        userRepository.save(user);
+        // MyPageService의 addDistanceAndLevelUp 메서드로 거리 누적 및 레벨업 처리
+        mypageService.addDistanceAndLevelUp(userId, distanceKm);
 
         return RaceResultDto.builder()
                 .id(savedResult.getId())
@@ -87,7 +59,6 @@ public class RaceResultService {
                 .averagePace(savedResult.getAveragePace())
                 .build();
     }
-
 
     /**
      * 특정 유저의 경기 결과 리스트 조회
@@ -104,6 +75,8 @@ public class RaceResultService {
                         .resultTime(r.getResultTime())
                         .pace(r.getPace())
                         .rank(r.getRank())
+                        .distance(r.getDistance())
+                        .averagePace(r.getAveragePace())
                         .build())
                 .collect(Collectors.toList());
     }
@@ -123,27 +96,8 @@ public class RaceResultService {
                 .resultTime(result.getResultTime())
                 .pace(result.getPace())
                 .rank(result.getRank())
+                .distance(result.getDistance())
+                .averagePace(result.getAveragePace())
                 .build();
     }
-
-    // 레벨업
-    @Transactional
-    public void saveRaceResult(Long userId, RaceResult raceResult) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
-
-        raceResult.setUser(user);
-        raceResultRepository.save(raceResult);
-
-        // 1) 레이스 결과 저장
-        raceResultRepository.save(raceResult);
-
-        // 2) 경험치 계산 예시 (거리 x 10)
-        int gainedExp = (int)(raceResult.getDistance() * 10);
-
-        // 3) 경험치 및 레벨업 처리
-        mypageService.addExperienceAndLevelUp(userId, gainedExp);
-    }
-
-
 }

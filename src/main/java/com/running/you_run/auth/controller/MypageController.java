@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.running.you_run.auth.dto.DistanceUpdateRequest;
 
 @RestController
 @RequestMapping("/mypage")
@@ -44,4 +45,12 @@ public class MyPageController {
         MyPageDto createdProfile = myPageService.createUserProfile(request);
         return ResponseEntity.ok(createdProfile);
     }
+
+    @PostMapping("/add-distance")
+    public ResponseEntity<MyPageDto> addDistance(@RequestBody DistanceUpdateRequest request) {
+        myPageService.addDistanceAndLevelUp(request.getUserId(), request.getDistanceKm());
+        MyPageDto updatedProfile = myPageService.getMyPageSummary(request.getUserId());
+        return ResponseEntity.ok(updatedProfile);
+    }
+
 }
