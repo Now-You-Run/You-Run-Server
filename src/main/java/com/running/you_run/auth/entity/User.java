@@ -45,6 +45,7 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     @Column
+    @Enumerated(EnumType.STRING)
     private UserRole role;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
