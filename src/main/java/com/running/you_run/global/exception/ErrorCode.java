@@ -11,6 +11,12 @@ public enum ErrorCode {
     USER_INVALID_LOGIN(HttpStatus.BAD_REQUEST, "700-4", "올바르지 않은 로그인"),
     USER_UNAUTHORIZED(HttpStatus.FORBIDDEN, "700-5", "권한이 없습니다."),
 
+    FRIEND_NOT_EXIST(HttpStatus.BAD_REQUEST, "710-1", "친구 관계가 아닙니다"),
+    FRIEND_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "710-2", "이미 친구 관계입니다"),
+    FRIEND_CAN_NOT_DELETE(HttpStatus.BAD_REQUEST, "710-3","친구 관계가 아니라 삭제할 수 없습니다"),
+    FRIEND_CAN_NOT_REJECT(HttpStatus.BAD_REQUEST, "710-4","친구 관계가 아니라 거절할 수 없습니다."),
+    FRIEND_CAN_NOT_ACCEPT(HttpStatus.BAD_REQUEST, "710-5","친구 관계가 아니라 수락할 수 없습니다"),
+
     TOKEN_INVALID(HttpStatus.UNAUTHORIZED, "701-1", "유효하지 않은 토큰입니다."),
     TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "701-2", "토큰이 만료되었습니다."),
 
