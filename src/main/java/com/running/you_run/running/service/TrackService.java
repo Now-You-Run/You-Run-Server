@@ -19,6 +19,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,13 +29,20 @@ public class TrackService {
     private final TrackRepository trackRepository;
     private final RecordRepository recordRepository;
     private final UserRepository userRepository;
+    private final KakaoGeoService kakaoGeoService;
     @Transactional
     public Long storeTrack(RunningTrackStoreRequest request) {
+        double startLatitude = request.path().get(0).latitude();
+        double startLongitude = request.path().get(0).longitude();
+        String address = kakaoGeoService.getCityDistrict(startLatitude,startLongitude);
         RunningTrack track = RunningTrack.builder()
                 .name(request.name())
                 .totalDistance(request.totalDistance())
                 .rate(request.rate())
                 .path(request.createLineString())
+                .startLatitude(startLatitude)
+                .startLongitude(startLongitude)
+                .address(address)
                 .build();
 
         trackRepository.save(track);
@@ -77,6 +85,7 @@ public class TrackService {
         List<RunningTrack> allTracks = trackRepository.findAll();
 
         List<TrackListItemDto> trackListItemDtos = TrackListResponse.convertRunningTracksToTrackListResponse(allTracks);
+        trackListItemDtos.sort(Comparator.comparingInt(TrackListItemDto::distance));
         return new TrackListResponse(trackListItemDtos);
     }
 }
