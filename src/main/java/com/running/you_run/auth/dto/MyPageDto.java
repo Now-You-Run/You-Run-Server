@@ -15,7 +15,6 @@ public class MyPageDto {
     private String email;
     private String nickname;
     private String profileImageUrl;
-    private String bio;
     private LocalDate birthDate;
     private Double height;
     private Double weight;
@@ -23,7 +22,7 @@ public class MyPageDto {
     // 레벨 및 경험치
     private double totalDistance;
     private int level;
-    private int experience;
+    private String grade;
 
     // 주간 러닝 통계
     private double weeklyDistance;   // km

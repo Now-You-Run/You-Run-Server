@@ -29,6 +29,17 @@ public class MyPageService {
     private final MyPageQueryRepository myPageQueryRepository;
     private final Map<Integer, Double> levelDistanceMap = new HashMap<>();
 
+    @PostConstruct
+    private void initLevelDistanceMap() {
+        double sum = 0;
+        levelDistanceMap.put(1, 0.0);
+        for (int i = 2; i <= 1000; i++) {
+            sum += getDistanceToLevelUp(i - 1);
+            levelDistanceMap.put(i, sum);
+        }
+    }
+
+
     @PersistenceContext
     private EntityManager em;
 
@@ -36,15 +47,19 @@ public class MyPageService {
         User user = userRepository.findById(userId)
                 .orElseThrow(NotFoundException::new);
 
+        int level = user.getLevel();
+        String grade = user.getGrade();
+
         return MyPageDto.builder()
                 .userId(user.getId())
                 .email(user.getEmail())
                 .nickname(user.getNickname())
-                .bio(user.getBio())
                 .profileImageUrl(user.getProfileImageUrl())
                 .birthDate(user.getBirthDate())
                 .height(user.getHeight())
                 .weight(user.getWeight())
+                .level(level)
+                .grade(grade)
                 .build();
     }
 
@@ -53,7 +68,6 @@ public class MyPageService {
                 .orElseThrow(NotFoundException::new);
 
         user.setNickname(updateRequest.getNickname());
-        user.setBio(updateRequest.getBio());
         user.setProfileImageUrl(updateRequest.getProfileImageUrl());
         user.setBirthDate(updateRequest.getBirthDate());
         user.setHeight(updateRequest.getHeight());
@@ -65,7 +79,6 @@ public class MyPageService {
                 .userId(user.getId())
                 .email(user.getEmail())
                 .nickname(user.getNickname())
-                .bio(user.getBio())
                 .profileImageUrl(user.getProfileImageUrl())
                 .birthDate(user.getBirthDate())
                 .height(user.getHeight())
@@ -78,7 +91,6 @@ public class MyPageService {
         User user = User.builder()
                 .email(request.getEmail())
                 .nickname(request.getNickname())
-                .bio(request.getBio())
                 .profileImageUrl(request.getProfileImageUrl())
                 .birthDate(request.getBirthDate())
                 .height(request.getHeight())
@@ -91,7 +103,6 @@ public class MyPageService {
                 .userId(user.getId())
                 .email(savedUser.getEmail())
                 .nickname(savedUser.getNickname())
-                .bio(savedUser.getBio())
                 .profileImageUrl(savedUser.getProfileImageUrl())
                 .birthDate(savedUser.getBirthDate())
                 .height(savedUser.getHeight())
@@ -108,7 +119,7 @@ public class MyPageService {
         LocalDateTime weekAgo = now.minusDays(7);
 
         TypedQuery<RaceResult> weeklyRunsQuery = em.createQuery(
-                "SELECT r FROM RaceResult r WHERE r.user.id = :userId AND r.runDate BETWEEN :weekAgo AND :now",
+                "SELECT r FROM RaceResult r WHERE r.user.id = :userId AND r.raceDate BETWEEN :weekAgo AND :now",
                 RaceResult.class);
         weeklyRunsQuery.setParameter("userId", userId);
         weeklyRunsQuery.setParameter("weekAgo", weekAgo);
@@ -120,7 +131,7 @@ public class MyPageService {
         int runningCount = weeklyRuns.size();
 
         TypedQuery<RaceResult> recentRacesQuery = em.createQuery(
-                "SELECT r FROM RaceResult r WHERE r.user.id = :userId ORDER BY r.runDate DESC",
+                "SELECT r FROM RaceResult r WHERE r.user.id = :userId ORDER BY r.raceDate DESC",
                 RaceResult.class);
         recentRacesQuery.setParameter("userId", userId);
         recentRacesQuery.setMaxResults(3);
@@ -133,7 +144,6 @@ public class MyPageService {
                         .raceDate(r.getRaceDate().toLocalDate())
                         .resultTime(r.getResultTime())
                         .pace(r.getAveragePace())
-                        .rank(r.getRank())
                         .build())
                 .collect(Collectors.toList());
 
@@ -142,7 +152,14 @@ public class MyPageService {
 
         return MyPageDto.builder()
                 .userId(user.getId())
+                .email(user.getEmail())
+                .nickname(user.getNickname())
+                .profileImageUrl(user.getProfileImageUrl())
+                .birthDate(user.getBirthDate())
+                .height(user.getHeight())
+                .weight(user.getWeight())
                 .level(user.getLevel())
+                .grade(user.getGrade())
                 .totalDistance(user.getTotalDistance())
                 .weeklyDistance(weeklyDistance)
                 .averagePace(averagePace)
@@ -153,15 +170,6 @@ public class MyPageService {
                 .build();
     }
 
-    @PostConstruct
-    private void initLevelDistanceMap() {
-        double sum = 0;
-        levelDistanceMap.put(1, 0.0);
-        for (int i = 2; i <= 1000; i++) {
-            sum += getDistanceToLevelUp(i - 1);  // (i-1)레벨 -> i레벨 거리 누적
-            levelDistanceMap.put(i, sum);
-        }
-    }
 
     @Transactional
     public void addDistanceAndLevelUp(Long userId, double distanceKm) {

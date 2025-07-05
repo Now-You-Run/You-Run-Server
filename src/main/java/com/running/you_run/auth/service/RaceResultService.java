@@ -54,7 +54,6 @@ public class RaceResultService {
                 .raceDate(savedResult.getRaceDate().toLocalDate())
                 .resultTime(savedResult.getResultTime())
                 .pace(savedResult.getPace())
-                .rank(savedResult.getRank())
                 .distance(savedResult.getDistance())
                 .averagePace(savedResult.getAveragePace())
                 .build();
@@ -74,7 +73,6 @@ public class RaceResultService {
                         .raceDate(r.getRaceDate().toLocalDate())
                         .resultTime(r.getResultTime())
                         .pace(r.getPace())
-                        .rank(r.getRank())
                         .distance(r.getDistance())
                         .averagePace(r.getAveragePace())
                         .build())
@@ -95,7 +93,6 @@ public class RaceResultService {
                 .raceDate(result.getRaceDate().toLocalDate())
                 .resultTime(result.getResultTime())
                 .pace(result.getPace())
-                .rank(result.getRank())
                 .distance(result.getDistance())
                 .averagePace(result.getAveragePace())
                 .build();

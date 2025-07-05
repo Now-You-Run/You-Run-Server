@@ -29,9 +29,8 @@ public class MyPageQueryRepositoryImpl implements MyPageQueryRepository {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime weekAgo = now.minusDays(7);
 
-        // RunningRecord → RunningResult 로 변경, 필드명도 runDate 등으로 맞춤
         TypedQuery<RaceResult> rrQuery = em.createQuery(
-                "SELECT r FROM RunningResult r WHERE r.user.id = :userId AND r.runDate BETWEEN :weekAgo AND :now",
+                "SELECT r FROM RaceResult r WHERE r.user.id = :userId AND r.raceDate BETWEEN :weekAgo AND :now",
                 RaceResult.class);
         rrQuery.setParameter("userId", userId);
         rrQuery.setParameter("weekAgo", weekAgo);
@@ -56,7 +55,6 @@ public class MyPageQueryRepositoryImpl implements MyPageQueryRepository {
                         .raceDate(r.getRaceDate().toLocalDate())
                         .resultTime(r.getResultTime())
                         .pace(r.getPace())
-                        .rank(r.getRank())
                         .build())
                 .collect(Collectors.toList());
 
@@ -64,12 +62,10 @@ public class MyPageQueryRepositoryImpl implements MyPageQueryRepository {
                 .userId(user.getId())
                 .nickname(user.getNickname())
                 .profileImageUrl(user.getProfileImageUrl())
-                .bio(user.getBio())
                 .birthDate(user.getBirthDate())
                 .height(user.getHeight())
                 .weight(user.getWeight())
                 .level(user.getLevel())
-                .experience(user.getExperience().intValue())
                 .weeklyDistance(totalDistance)
                 .averagePace(averagePace)
                 .runningCount(runningCount)

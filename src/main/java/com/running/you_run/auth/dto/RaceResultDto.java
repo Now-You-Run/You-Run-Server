@@ -16,8 +16,7 @@ public class RaceResultDto {
     private String raceName;
     private LocalDate raceDate;
     private Double resultTime;
-    private Double pace;
-    private Integer rank;
+    private Double pace;;
     private Double distance;
     private Double averagePace;
 }

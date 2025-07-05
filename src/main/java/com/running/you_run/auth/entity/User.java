@@ -54,10 +54,6 @@ public class User {
     // MyPage 관련 정보들
     @Setter
     @Column
-    private String bio;
-
-    @Setter
-    @Column
     private String profileImageUrl;
 
     @Setter
@@ -74,18 +70,6 @@ public class User {
 
     // 러닝 관련 데이터 (경험치 부분)
     @Setter
-    @Column(columnDefinition = "double default 0.0")
-    private Double experience;
-
-    @Setter
-    @Column(columnDefinition = "double default 0.0")
-    private Double totalDistance;
-
-    @Setter
-    @Column(columnDefinition = "double default 0.0")
-    private Double totalExperience;
-
-    @Setter
     @Column(columnDefinition = "int default 1")
     private Integer level;
 
@@ -93,6 +77,9 @@ public class User {
     @Column
     private String grade;
 
+    @Setter
+    @Column(columnDefinition = "double default 0.0")
+    private Double totalDistance;
 
     @PrePersist
     public void prePersist() {
