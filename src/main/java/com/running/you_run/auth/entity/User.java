@@ -43,7 +43,6 @@ public class User {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    @Enumerated(EnumType.STRING)
     @Column
     @Enumerated(EnumType.STRING)
     private UserRole role;
