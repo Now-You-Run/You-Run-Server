@@ -29,6 +29,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         // JwtFilter의 NO_AUTH_REQUIRED_URLS 와 유사하게 설정
                         .requestMatchers(
+                                "/api/**",
                                 "/api/auth/**",
                                 "/mypage/**",
                                 "/race-results/**",

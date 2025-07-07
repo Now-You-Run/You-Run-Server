@@ -1,6 +1,9 @@
 package com.running.you_run.user.entity;
 
+import com.running.you_run.user.Enum.UserGrade;
 import com.running.you_run.user.Enum.UserRole;
+import com.running.you_run.user.payload.request.UserUpdateProfileReqeust;
+import com.running.you_run.user.util.LevelCalculator;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -58,16 +61,13 @@ public class User {
     @Column
     private Double weight;
 
-    // 러닝 관련 데이터 (경험치 부분)
-    @Setter
     @Column(columnDefinition = "int default 1")
     private Integer level;
 
-    @Setter
     @Column
-    private String grade;
+    @Enumerated(EnumType.STRING)
+    private UserGrade grade = UserGrade.IRON;
 
-    @Setter
     @Column(columnDefinition = "double default 0.0")
     private Double totalDistance;
 
@@ -80,4 +80,22 @@ public class User {
     public User() {
 
     }
+
+    public void updateUserProfile(UserUpdateProfileReqeust reqeust){
+        this.name = reqeust.name();
+        this.birthDate = reqeust.birthDate();
+        this.height = reqeust.height();
+        this.weight = reqeust.weight();
+    }
+    public void gainExp(double distance, LevelCalculator levelCalculator) {
+        if (distance <= 0) return; // 0 이하 거리 무시
+        this.totalDistance += distance;
+        this.level = levelCalculator.addDistanceAndLevelUp(this.totalDistance - distance, distance);
+        this.grade = UserGrade.fromTotalDistance(this.totalDistance);
+    }
+
+
+
+
+
 }

@@ -1,10 +1,11 @@
 package com.running.you_run.user.payload.request;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 public record UserUpdateProfileReqeust(
+        Long userId,
         String name,
-        LocalDateTime birthDate,
+        LocalDate birthDate,
         Double height,
         Double weight
 ) {
