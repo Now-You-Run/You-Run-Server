@@ -16,6 +16,7 @@ import com.running.you_run.running.repository.RecordRepository;
 import com.running.you_run.running.repository.TrackRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -92,5 +93,11 @@ public class TrackService {
     private long calculateDuration(LocalDateTime startedAt, LocalDateTime finishedAt){
         Duration duration = Duration.between(startedAt, finishedAt);
         return duration.getSeconds();
+    }
+    @Transactional
+    public TrackListResponse returnAllTrackRecordResponsesOrderByDb(double userLon, double userLat){
+        List<RunningTrack> tracksOrderByDistance = trackRepository.findTracksOrderByDistance(userLon, userLat);
+        List<TrackListItemDto> trackListItemDtos = TrackListResponse.convertRunningTracksToTrackListResponse(tracksOrderByDistance);
+        return new TrackListResponse(trackListItemDtos);
     }
 }

@@ -41,11 +41,22 @@ public class TrackController {
 
     @GetMapping("/list")
     @Operation(
-            summary = "모든 트랙 불오기",
+            summary = "모든 트랙 불러오기",
             description = "모든 트랙을 불러옵니다.\n"
     )
     public ResponseEntity<?> returnAllTracks() {
         TrackListResponse trackListResponses = trackService.returnAllTrackRecordResponses();
         return Response.ok(trackListResponses);
     }
+
+    @GetMapping("/list/order/close")
+    public ResponseEntity<?> returnAllTracksByClose(
+            @RequestParam double userLon,
+            @RequestParam double userLat
+    ){
+        TrackListResponse trackListResponses = trackService.returnAllTrackRecordResponsesOrderByDb(
+                userLon, userLat);
+        return Response.ok(trackListResponses);
+    }
+
 }
