@@ -26,6 +26,12 @@ public class UserProfileService {
         userRepository.save(user);
         return UserInfoResponse.from(user);
     }
+    @Transactional
+    public UserInfoResponse returnUserProfile(Long userId){
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_EXIST));
+        return UserInfoResponse.from(user);
+    }
 
     @Transactional
     public UserGradeInfoResponse gainExpUser(UserGainExpRequest request) {

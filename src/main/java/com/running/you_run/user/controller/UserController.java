@@ -37,7 +37,7 @@ public class UserController {
         return Response.ok(userGradeInfoResponse);
     }
 
-    @GetMapping("")
+    @GetMapping("/grade")
     @Operation(
             summary = "등급과 관련된 유저의 정보 로드",
             description = "레벨,등급,경험치를 불러옵니다.\n"
@@ -45,5 +45,15 @@ public class UserController {
     public ResponseEntity<?> returnUserGradeInfo(@RequestParam Long userId) {
         UserGradeInfoResponse userGradeInfoResponse = userProfileService.returnUserGradeInfo(userId);
         return Response.ok(userGradeInfoResponse);
+    }
+
+    @GetMapping("")
+    @Operation(
+            summary = "유저의 정보 로드",
+            description = "유저의 모든 정보를 불러옵니다.\n"
+    )
+    public ResponseEntity<?> returnUserInfo(@RequestParam Long userId) {
+        UserInfoResponse userInfoResponse = userProfileService.returnUserProfile(userId);
+        return Response.ok(userInfoResponse);
     }
 }
