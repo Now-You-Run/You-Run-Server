@@ -18,6 +18,8 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -70,7 +72,7 @@ public class TrackService {
                     return new TrackRecordDto(
                             entity.getUserId(),
                             user.getName(), // 또는 getNickname() 등
-                            entity.getDuration()
+                            calculateDuration(entity.getStartedAt(),entity.getFinishedAt())
                     );
                 })
                 .collect(Collectors.toList());
@@ -87,5 +89,9 @@ public class TrackService {
         List<TrackListItemDto> trackListItemDtos = TrackListResponse.convertRunningTracksToTrackListResponse(allTracks);
         trackListItemDtos.sort(Comparator.comparingInt(TrackListItemDto::distance));
         return new TrackListResponse(trackListItemDtos);
+    }
+    private long calculateDuration(LocalDateTime startedAt, LocalDateTime finishedAt){
+        Duration duration = Duration.between(startedAt, finishedAt);
+        return duration.getSeconds();
     }
 }
