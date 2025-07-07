@@ -38,6 +38,7 @@ public class SecurityConfig {
                                 "/api/record/**",
                                 "/api/public/**",
                                 "/swagger-ui/**",
+                                "/swagger-ui.html",
                                 "/v3/api-docs/**",
                                 "/login/oauth2/code/**",
                                 "/favicon.ico"

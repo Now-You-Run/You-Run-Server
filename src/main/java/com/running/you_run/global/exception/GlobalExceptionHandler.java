@@ -1,15 +1,27 @@
 package com.running.you_run.global.exception;
 
 import com.running.you_run.global.payload.Response;
+import com.running.you_run.running.controller.RecordController;
+import com.running.you_run.running.controller.TrackController;
+import com.running.you_run.user.controller.AuthController;
+import com.running.you_run.user.controller.FriendController;
+import com.running.you_run.user.controller.UserController;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@RestControllerAdvice
+//@RestControllerAdvice(annotations = {RestController.class}, basePackageClasses = {
+//        RecordController.class,
+//        TrackController.class,
+//        AuthController.class,
+//        FriendController.class,
+//        UserController.class
+//})
 @Slf4j
 public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
