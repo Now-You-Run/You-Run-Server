@@ -3,14 +3,13 @@ package com.running.you_run.running.controller;
 import com.running.you_run.global.payload.Response;
 import com.running.you_run.running.payload.request.RunningTrackStoreRequest;
 import com.running.you_run.running.payload.response.TrackListResponse;
+import com.running.you_run.running.payload.response.TrackPagesResponse;
 import com.running.you_run.running.payload.response.TrackRecordResponse;
 import com.running.you_run.running.service.TrackService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RequestMapping("/api/track")
 @RestController
@@ -52,11 +51,18 @@ public class TrackController {
     @GetMapping("/list/order/close")
     public ResponseEntity<?> returnAllTracksByClose(
             @RequestParam double userLon,
-            @RequestParam double userLat
-    ){
-        TrackListResponse trackListResponses = trackService.returnAllTrackRecordResponsesOrderByDb(
-                userLon, userLat);
-        return Response.ok(trackListResponses);
+            @RequestParam double userLat,
+            @RequestParam int page,
+            @RequestParam int size
+    ) {
+        TrackPagesResponse trackPagesResponse =
+                trackService.returnAllTrackRecordResponsesOrderByDb(
+                        page,
+                        size,
+                        userLon,
+                        userLat
+                );
+        return Response.ok(trackPagesResponse);
     }
 
 }

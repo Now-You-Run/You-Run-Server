@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 public record TrackListResponse(
     List<TrackListItemDto> tracks
+
 ){
     public static List<TrackListItemDto> convertRunningTracksToTrackListResponse(List<RunningTrack> tracks) {
         return tracks.stream()

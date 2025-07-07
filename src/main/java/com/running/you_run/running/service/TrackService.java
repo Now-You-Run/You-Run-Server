@@ -1,5 +1,6 @@
 package com.running.you_run.running.service;
 
+import com.running.you_run.running.payload.response.TrackPagesResponse;
 import com.running.you_run.user.entity.User;
 import com.running.you_run.user.repository.UserRepository;
 import com.running.you_run.global.exception.ApiException;
@@ -16,6 +17,9 @@ import com.running.you_run.running.repository.RecordRepository;
 import com.running.you_run.running.repository.TrackRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
@@ -95,9 +99,18 @@ public class TrackService {
         return duration.getSeconds();
     }
     @Transactional
-    public TrackListResponse returnAllTrackRecordResponsesOrderByDb(double userLon, double userLat){
-        List<RunningTrack> tracksOrderByDistance = trackRepository.findTracksOrderByDistance(userLon, userLat);
-        List<TrackListItemDto> trackListItemDtos = TrackListResponse.convertRunningTracksToTrackListResponse(tracksOrderByDistance);
-        return new TrackListResponse(trackListItemDtos);
+    public TrackPagesResponse returnAllTrackRecordResponsesOrderByDb(int page, int size, double userLon, double userLat){
+        Pageable pageable = PageRequest.of(page, size);
+        Page<RunningTrack> tracksPage = trackRepository.findTracksOrderByDistance(
+                userLon, userLat, pageable
+        );
+        List<TrackListItemDto> trackListItemDtos = TrackListResponse.convertRunningTracksToTrackListResponse(tracksPage.getContent());
+        int totalPages = tracksPage.getTotalPages();
+        long totalElements = tracksPage.getTotalElements();
+        return new TrackPagesResponse(
+                trackListItemDtos,
+                totalPages,
+                totalElements
+        );
     }
 }
