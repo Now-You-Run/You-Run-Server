@@ -1,5 +1,7 @@
 package com.running.you_run.user.util;
 
+import com.running.you_run.user.Enum.UserGrade;
+import com.running.you_run.user.entity.User;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -9,7 +11,7 @@ import java.util.Map;
 public class LevelCalculator {
     private final Map<Integer, Double> levelDistanceMap = new HashMap<>();
 
-    LevelCalculator(){
+    public LevelCalculator(){
         initLevelDistanceMap();
     }
 
@@ -17,20 +19,17 @@ public class LevelCalculator {
         return calculateLevelByTotalDistanceBinarySearch(beforeUserDistance + distanceKm);
     }
 
-    private double getTotalDistanceForLevel(int level) {
+    public double getTotalDistanceForLevel(int level) {
         return levelDistanceMap.getOrDefault(level, Double.MAX_VALUE);
     }
 
-    private double getDistanceToLevelUp(int level) {
-        if (level >= 1 && level <= 10) {
-            return 3.0 * level;
-        } else if (level >= 11 && level <= 50) {
-            return 5.0 * level;
-        } else if (level >= 51 && level <= 100) {
-            return 10.0 * level;
-        } else {
-            return Double.MAX_VALUE;
+    public double getDistanceToLevelUp(int level) {
+        for (UserGrade grade : UserGrade.values()) {
+            if (level >= grade.getMinLevel() && level <= grade.getMaxLevel()) {
+                return grade.getLevelMultiple();
+            }
         }
+        return Double.MAX_VALUE;
     }
     private int calculateLevelByTotalDistanceBinarySearch(double totalDistance) {
         int left = 1;

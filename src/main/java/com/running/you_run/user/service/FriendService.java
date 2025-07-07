@@ -21,24 +21,26 @@ public class FriendService {
     private final FriendRepository friendRepository;
 
     @Transactional
-    public void addFriend(Long user1Id, Long user2Id) {
-        User user1 = userRepository.findById(user1Id)
+    public User addFriend(Long senderId, Long otherId) {
+        User sender = userRepository.findById(senderId)
                 .orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_EXIST));
-        User user2 = userRepository.findById(user2Id)
+        User other = userRepository.findById(otherId)
                 .orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_EXIST));
-        boolean exists = friendRepository.existsByUser1IdAndUser2Id(user1Id, user2Id) ||
-                friendRepository.existsByUser1IdAndUser2Id(user2Id, user1Id);
+        boolean exists = friendRepository.existsByUser1IdAndUser2Id(senderId, otherId) ||
+                friendRepository.existsByUser1IdAndUser2Id(otherId, senderId);
         if (exists) {
             throw new ApiException(ErrorCode.FRIEND_ALREADY_EXIST);
         }
 
         Friend friend = Friend.builder()
-                .user1(user1)
-                .user2(user2)
-                .senderId(user1Id)
+                .user1(sender)
+                .user2(other)
+                .senderId(senderId)
                 .status(FriendStatus.WAITING)
                 .build();
         friendRepository.save(friend);
+        //친추 받은 대상 반환
+        return other;
     }
     @Transactional
     public void deleteFriend(Long user1Id, Long user2Id) {

@@ -1,49 +1,55 @@
-package com.running.you_run.user.Enum;
+    package com.running.you_run.user.Enum;
 
-public enum UserGrade {
-    IRON("아이언", 0, 50),
-    BRONZE("브론즈", 50, 100),
-    SILVER("실버", 100, 150),
-    GOLD("골드", 150, 200),
-    PLATINUM("플래티넘", 200, 250),
-    DIAMOND("다이아", 250, 300),
-    MASTER("마스터", 300, 450),
-    GRAND_MASTER("그랜드 마스터", 450, 500),
-    LEGEND_RUNNER("레전드 러너", 500, 700);
+    public enum UserGrade {
+        IRON("아이언", 1, 9,2),
+        BRONZE("브론즈", 10, 19,2),
+        SILVER("실버", 20, 29,3),
+        GOLD("골드", 30, 39,3),
+        PLATINUM("플래티넘", 40, 54,6),
+        DIAMOND("다이아", 55, 79,6),
+        MASTER("마스터", 80, 119,10),
+        GRAND_MASTER("그랜드 마스터", 120, 179,10),
+        LEGEND_RUNNER("레전드 러너", 180, 300,100);
 
-    private final String name;
-    private final double minExp;
-    private final double maxExp;
+        private final String name;
+        private final int minLevel;
+        private final int maxLevel;
+        private final int levelMultiple;
 
-    UserGrade(String name, double minExp, double maxExp) {
-        this.name = name;
-        this.minExp = minExp;
-        this.maxExp = maxExp;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public double getMinExp() {
-        return minExp;
-    }
-
-    public double getMaxExp() {
-        return maxExp;
-    }
-
-    /**
-     * 누적 거리(distance)에 따라 등급을 반환합니다.
-     */
-    public static UserGrade fromTotalDistance(double totalDistance) {
-        for (UserGrade grade : values()) {
-            if (totalDistance > grade.minExp && totalDistance <= grade.maxExp) {
-                return grade;
-            }
+        UserGrade(String name, int minLevel, int maxLevel, int levelMultiple) {
+            this.name = name;
+            this.minLevel = minLevel;
+            this.maxLevel = maxLevel;
+            this.levelMultiple = levelMultiple;
         }
-        // 700km 초과 시 최상위 등급 반환
-        return LEGEND_RUNNER;
+
+        public String getName() {
+            return name;
+        }
+
+        public double getMinLevel() {
+            return minLevel;
+        }
+
+        public double getMaxLevel() {
+            return maxLevel;
+        }
+
+        public int getLevelMultiple() {
+            return levelMultiple;
+        }
+
+        /**
+         * 누적 거리(distance)에 따라 등급을 반환합니다.
+         */
+        public static UserGrade fromTotalDistance(int level) {
+            for (UserGrade grade : values()) {
+                if (level > grade.minLevel && level <= grade.maxLevel) {
+                    return grade;
+                }
+            }
+            // 700km 초과 시 최상위 등급 반환
+            return LEGEND_RUNNER;
+        }
     }
-}
 

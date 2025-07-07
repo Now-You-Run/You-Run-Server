@@ -66,6 +66,7 @@ public class User {
 
     @Column
     @Enumerated(EnumType.STRING)
+    @Builder.Default
     private UserGrade grade = UserGrade.IRON;
 
     @Column(columnDefinition = "double default 0.0")
@@ -91,11 +92,8 @@ public class User {
         if (distance <= 0) return; // 0 이하 거리 무시
         this.totalDistance += distance;
         this.level = levelCalculator.addDistanceAndLevelUp(this.totalDistance - distance, distance);
-        this.grade = UserGrade.fromTotalDistance(this.totalDistance);
+        this.grade = UserGrade.fromTotalDistance(this.level);
     }
-
-
-
 
 
 }
