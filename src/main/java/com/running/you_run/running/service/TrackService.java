@@ -1,7 +1,7 @@
 package com.running.you_run.running.service;
 
-import com.running.you_run.auth.entity.User;
-import com.running.you_run.auth.repository.UserRepository;
+import com.running.you_run.user.entity.User;
+import com.running.you_run.user.repository.UserRepository;
 import com.running.you_run.global.exception.ApiException;
 import com.running.you_run.global.exception.ErrorCode;
 import com.running.you_run.running.entity.Record;
@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
