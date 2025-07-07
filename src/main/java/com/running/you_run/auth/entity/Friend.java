@@ -2,16 +2,15 @@ package com.running.you_run.auth.entity;
 
 import com.running.you_run.auth.Enum.FriendStatus;
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Builder
 @Getter
+@AllArgsConstructor
 public class Friend {
-
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
