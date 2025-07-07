@@ -3,6 +3,7 @@ package com.running.you_run.user.service;
 import com.running.you_run.user.Enum.FriendStatus;
 import com.running.you_run.user.entity.Friend;
 import com.running.you_run.user.entity.User;
+import com.running.you_run.user.payload.dto.FriendListItemDto;
 import com.running.you_run.user.repository.FriendRepository;
 import com.running.you_run.user.repository.UserRepository;
 import com.running.you_run.global.exception.ApiException;
@@ -60,17 +61,19 @@ public class FriendService {
     }
 
     @Transactional
-    public List<User> findUserFriend(Long userId){
+    public List<FriendListItemDto> findUserFriends(Long userId){
         userRepository.findById(userId)
                 .orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_EXIST));
         // user1 또는 user2가 userId이고, status가 FRIEND인 모든 친구 관계 조회
-        List<Friend> userFriends = friendRepository.findAllByUser1IdAndStatus(userId, FriendStatus.FRIEND);
+        List<Friend> userFriends = friendRepository
+                .findAllByUser1IdAndStatusOrUser2IdAndStatus(userId, FriendStatus.FRIEND, userId, FriendStatus.FRIEND);
+
         // 친구 User 객체만 추출
-        List<User> friends = userFriends.stream()
-                .map(f -> f.getUser1().getId().equals(userId) ? f.getUser2() : f.getUser1())
-                .toList();
         // TODO: rank 등 추가 정보가 필요하면 friends를 DTO로 변환
-        return friends;
+        return userFriends.stream()
+                .map(friend -> FriendListItemDto.from(friend, userId))
+                .toList();
+
     }
 
     @Transactional

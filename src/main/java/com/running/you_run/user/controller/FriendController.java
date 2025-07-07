@@ -2,6 +2,7 @@ package com.running.you_run.user.controller;
 
 import com.running.you_run.global.payload.Response;
 import com.running.you_run.user.entity.User;
+import com.running.you_run.user.payload.dto.FriendListItemDto;
 import com.running.you_run.user.service.FriendService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -36,8 +37,8 @@ public class FriendController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<?> findAllFriends(@RequestParam Long user1Id){
-        List<User> userFriend = friendService.findUserFriend(user1Id);
+    public ResponseEntity<?> findAllFriends(@RequestParam Long senderId){
+        List<FriendListItemDto> userFriend = friendService.findUserFriends(senderId);
         return Response.ok(userFriend);
     }
 }
