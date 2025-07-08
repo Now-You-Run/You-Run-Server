@@ -22,16 +22,18 @@ public class Record {
     @Column
     @Enumerated(EnumType.STRING)
     private RunningMode mode;
-
-    @Column(nullable = true)
+    @Column
     private Long trackId;
-
     @Column(nullable = true)
     private Long opponentId;
-    @Column(nullable = true)
+    @Column
     private boolean isWinner;
-    private int duration;
-    private LocalDateTime date;
+    @Column(nullable = false)
+    private LocalDateTime startedAt;
+    private LocalDateTime finishedAt;
+    private double resultTime;
+    private double distance;
+    private double averagePace;
 
     public Record() {}
 }

@@ -11,8 +11,10 @@ public record RecordStoreRequest(
         Long trackId,
         Long opponentId,
         Boolean isWinner,
-        Integer duration,
-        LocalDateTime date
+        LocalDateTime startedAt,
+        LocalDateTime finishedAt,
+        double averagePace,
+        double distance
 ) {
     public Record toRecord(){
         return Record.builder()
@@ -21,8 +23,10 @@ public record RecordStoreRequest(
                 .trackId(trackId())
                 .opponentId(opponentId())
                 .isWinner(isWinner())
-                .duration(duration())
-                .date(date())
+                .startedAt(startedAt)
+                .finishedAt(finishedAt)
+                .averagePace(averagePace)
+                .distance(distance)
                 .build();
     }
 }
