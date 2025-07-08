@@ -111,4 +111,29 @@ public class FriendService {
         friend.changeStatus(FriendStatus.REJECTED);
         friendRepository.save(friend);
     }
+
+    @Transactional
+    public List<FriendListItemDto> findReceivedFriendRequests(Long userId) {
+        userRepository.findById(userId)
+                .orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_EXIST));
+
+        List<Friend> receivedRequests = friendRepository
+                .findAllByUser2IdAndStatus(userId, FriendStatus.WAITING);
+
+        return receivedRequests.stream()
+                .map(friend -> FriendListItemDto.from(friend, userId))
+                .toList();
+    }
+    @Transactional
+    public List<FriendListItemDto> findSentFriendRequests(Long userId) {
+        userRepository.findById(userId)
+                .orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_EXIST));
+
+        List<Friend> sentRequests = friendRepository
+                .findAllByUser1IdAndStatus(userId, FriendStatus.WAITING);
+
+        return sentRequests.stream()
+                .map(friend -> FriendListItemDto.from(friend, userId))
+                .toList();
+    }
 }

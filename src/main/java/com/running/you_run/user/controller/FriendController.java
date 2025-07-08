@@ -1,6 +1,7 @@
 package com.running.you_run.user.controller;
 
 import com.running.you_run.global.payload.Response;
+import com.running.you_run.user.entity.Friend;
 import com.running.you_run.user.entity.User;
 import com.running.you_run.user.payload.dto.FriendListItemDto;
 import com.running.you_run.user.service.FriendService;
@@ -47,6 +48,19 @@ public class FriendController {
     @Operation(summary = "친구 목록 확인", description = "sender의 친구 목록을 반환합니다.")
     public ResponseEntity<?> findAllFriends(@RequestParam Long senderId){
         List<FriendListItemDto> userFriend = friendService.findUserFriends(senderId);
+        return Response.ok(userFriend);
+    }
+    @GetMapping("/list/receive")
+    @Operation(summary = "받은 친구 요청 목록 확인", description = "sender가 받은 친구 요청 목록을 반환합니다.")
+    public ResponseEntity<?> findAllReceiveFriends(@RequestParam Long senderId){
+        List<FriendListItemDto> userFriend = friendService.findReceivedFriendRequests(senderId);
+        return Response.ok(userFriend);
+    }
+
+    @GetMapping("/list/sent")
+    @Operation(summary = "보낸 친구 요청 목록 확인", description = "sender가 보낸 친구 요청 목록을 반환합니다.")
+    public ResponseEntity<?> findAllSentFriends(@RequestParam Long senderId){
+        List<FriendListItemDto> userFriend = friendService.findSentFriendRequests(senderId);
         return Response.ok(userFriend);
     }
 }
