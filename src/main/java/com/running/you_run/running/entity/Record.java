@@ -34,7 +34,8 @@ public class Record {
     private double resultTime;
     private double distance;
     private double averagePace;
-
+    @Column(nullable = false)
+    private boolean isPersonalBest = false; // 기본값은 false
     public Record() {}
     public void updateRecord(LocalDateTime finishedAt, double resultTime, double distance, double averagePace, boolean isWinner, Long opponentId) {
         this.finishedAt = finishedAt;
@@ -43,5 +44,12 @@ public class Record {
         this.averagePace = averagePace;
         this.isWinner = isWinner;
         this.opponentId = opponentId;
+    }
+    public void markAsPersonalBest() {
+        this.isPersonalBest = true;
+    }
+
+    public void unmarkAsPersonalBest() {
+        this.isPersonalBest = false;
     }
 }

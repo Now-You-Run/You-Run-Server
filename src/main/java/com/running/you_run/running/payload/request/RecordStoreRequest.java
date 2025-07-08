@@ -29,6 +29,7 @@ public record RecordStoreRequest(
                 .averagePace(averagePace)
                 .distance(distance)
                 .resultTime(resultTime)
+                .isPersonalBest(false)
                 .build();
     }
 

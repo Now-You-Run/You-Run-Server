@@ -11,4 +11,5 @@ public interface RecordRepository extends JpaRepository<Record, Long> {
     List<Record> findAllById(Long id);
     List<Record> findByUserId(Long userId);
     Optional<Record> findByUserIdAndTrackId(Long userId, Long trackId);
+    Optional<Record> findByUserIdAndTrackIdAndIsPersonalBestIsTrue(Long userId, Long trackId);
 }

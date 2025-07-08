@@ -23,34 +23,23 @@ public class RecordService {
     private final TrackRepository trackRepository;
     @Transactional
     public Record storeRecord(RecordStoreRequest request) {
-        Long userId = request.userId();
-        Long trackId = request.trackId();
-
         double newResultTime = request.calculateResultTime();
+        Record newRecord = request.toRecord(newResultTime);
 
-        // 2. 기존 최고 기록 조회
-        Optional<Record> existingRecordOpt = recordRepository.findByUserIdAndTrackId(userId, trackId);
+        Optional<Record> oldBestRecordOpt = recordRepository
+                .findByUserIdAndTrackIdAndIsPersonalBestIsTrue(request.userId(), request.trackId());
 
-        if (existingRecordOpt.isPresent()) {
-            Record existingRecord = existingRecordOpt.get();
+        if (oldBestRecordOpt.isPresent()) {
+            Record oldBestRecord = oldBestRecordOpt.get();
 
-            if (newResultTime < existingRecord.getResultTime()) {
-                existingRecord.updateRecord(
-                        request.finishedAt(),
-                        newResultTime,
-                        request.distance(),
-                        request.averagePace(),
-                        request.isWinner(),
-                        request.opponentId()
-                );
-                return existingRecord;
-            } else {
-                return existingRecord;
+            if (newRecord.getResultTime() < oldBestRecord.getResultTime()) {
+                oldBestRecord.unmarkAsPersonalBest();
+                newRecord.markAsPersonalBest();
             }
         } else {
-            Record newRecord = request.toRecord(newResultTime);
-            return recordRepository.save(newRecord);
+            newRecord.markAsPersonalBest();
         }
+        return recordRepository.save(newRecord);
     }
     @Transactional
     public List<RecordDto> findAllRecordById(Long userId){
