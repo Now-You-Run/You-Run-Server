@@ -2,6 +2,7 @@ package com.running.you_run.running.controller;
 
 import com.running.you_run.global.payload.Response;
 import com.running.you_run.running.entity.Record;
+import com.running.you_run.running.payload.dto.RecordDto;
 import com.running.you_run.running.payload.request.RecordStoreRequest;
 import com.running.you_run.running.service.RecordService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -37,7 +38,7 @@ public class RecordController {
                     "자유 모드 기록 반환 X(자유 모드 기록은 로컬에)\n"
     )
     public ResponseEntity<?> loadAllRecordsByUserId(@RequestParam Long userId) {
-        List<Record> allRecordById = recordService.findAllRecordById(userId);
+        List<RecordDto> allRecordById = recordService.findAllRecordById(userId);
         return Response.ok(allRecordById);
     }
 
