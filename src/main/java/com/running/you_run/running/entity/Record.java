@@ -36,4 +36,12 @@ public class Record {
     private double averagePace;
 
     public Record() {}
+    public void updateRecord(LocalDateTime finishedAt, double resultTime, double distance, double averagePace, boolean isWinner, Long opponentId) {
+        this.finishedAt = finishedAt;
+        this.resultTime = resultTime;
+        this.distance = distance;
+        this.averagePace = averagePace;
+        this.isWinner = isWinner;
+        this.opponentId = opponentId;
+    }
 }
