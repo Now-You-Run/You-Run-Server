@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.locationtech.jts.geom.LineString;
 
 import java.time.LocalDateTime;
 
@@ -36,6 +37,9 @@ public class Record {
     private double averagePace;
     @Column(nullable = false)
     private boolean isPersonalBest = false; // 기본값은 false
+    @Column(name = "user_path", columnDefinition = "geometry(LineString,4326)")
+    private LineString path;
+
     public Record() {}
     public void updateRecord(LocalDateTime finishedAt, double resultTime, double distance, double averagePace, boolean isWinner, Long opponentId) {
         this.finishedAt = finishedAt;
