@@ -4,6 +4,7 @@ import com.running.you_run.user.Enum.UserGrade;
 import com.running.you_run.user.Enum.UserRole;
 import com.running.you_run.user.payload.request.UserUpdateProfileReqeust;
 import com.running.you_run.user.util.LevelCalculator;
+import com.running.you_run.user.util.PointCalculator;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -61,6 +62,9 @@ public class User {
     @Column
     private Double weight;
 
+    @Column(columnDefinition = "BIGINT default 0")
+    private long point;
+
     @Column(columnDefinition = "int default 1")
     private Integer level;
 
@@ -69,12 +73,12 @@ public class User {
     @Builder.Default
     private UserGrade grade = UserGrade.IRON;
 
-    @Column(columnDefinition = "double default 0.0")
-    private Double totalDistance;
+    @Column
+    private Long totalDistance;
 
     @PrePersist
     public void prePersist() {
-        if (this.totalDistance == null) this.totalDistance = 0.0;
+        if (this.totalDistance == null) this.totalDistance = 0L;
         if (this.level == null) this.level = 1;
     }
 
@@ -88,12 +92,11 @@ public class User {
         this.height = reqeust.height();
         this.weight = reqeust.weight();
     }
-    public void gainExp(double distance, LevelCalculator levelCalculator) {
-        if (distance <= 0) return; // 0 이하 거리 무시
+
+    public void applyRunningResult(long distance, long point, int newLevel){
         this.totalDistance += distance;
-        this.level = levelCalculator.addDistanceAndLevelUp(this.totalDistance - distance, distance);
+        this.point += point;
+        this.level = newLevel;
         this.grade = UserGrade.fromTotalDistance(this.level);
     }
-
-
 }

@@ -15,7 +15,7 @@ public record RecordStoreRequest(
         LocalDateTime startedAt,
         LocalDateTime finishedAt,
         double averagePace,
-        double distance
+        long distance
 ) {
     public Record toRecord(double resultTime){
         return Record.builder()
@@ -23,7 +23,7 @@ public record RecordStoreRequest(
                 .mode(mode() == null ? null : RunningMode.valueOf(mode()))
                 .trackId(trackId())
                 .opponentId(opponentId())
-                .isWinner(isWinner())
+                .isWinner(isWinner() != null && isWinner())
                 .startedAt(startedAt)
                 .finishedAt(finishedAt)
                 .averagePace(averagePace)

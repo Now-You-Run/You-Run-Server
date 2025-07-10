@@ -44,7 +44,7 @@
          */
         public static UserGrade fromTotalDistance(int level) {
             for (UserGrade grade : values()) {
-                if (level > grade.minLevel && level <= grade.maxLevel) {
+                if (level >= grade.minLevel && level <= grade.maxLevel) {
                     return grade;
                 }
             }

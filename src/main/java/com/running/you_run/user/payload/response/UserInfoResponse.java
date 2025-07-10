@@ -12,7 +12,8 @@ public record UserInfoResponse(
         Double weight,
         int level,
         String grade,
-        Double totalDistance
+        long totalDistance,
+        long point
 ) {
     public static UserInfoResponse from(User user) {
         return new UserInfoResponse(
@@ -23,7 +24,8 @@ public record UserInfoResponse(
                 user.getWeight(),
                 user.getLevel(),
                 user.getGrade().getName(),
-                user.getTotalDistance()
+                user.getTotalDistance(),
+                user.getPoint()
         );
     }
 }
