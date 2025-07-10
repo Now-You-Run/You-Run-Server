@@ -27,6 +27,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -66,17 +67,28 @@ public class TrackService {
         RunningTrack track = trackRepository.findById(trackId)
                 .orElseThrow(() -> new ApiException(ErrorCode.TOKEN_INVALID));
 
-        List<Record> recordEntities = recordRepository.findByTrackId(trackId);
+        List<Record> recordEntities = recordRepository
+                .findByTrackIdAndIsPersonalBestTrueOrderByResultTimeAsc(trackId);
+
+        // 2. Collect all user IDs from the records
+        List<Long> userIds = recordEntities.stream()
+                .map(Record::getUserId)
+                .distinct()
+                .collect(Collectors.toList());
+
+        // 3. Second query: Fetch all necessary users in a single batch
+        Map<Long, User> userMap = userRepository.findAllById(userIds).stream()
+                .collect(Collectors.toMap(User::getId, user -> user));
 
         List<TrackRecordDto> records = recordEntities.stream()
                 .map(entity -> {
-                    // userId로 User 엔티티를 조회
-                    User user = userRepository.findById(entity.getUserId())
-                            .orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_EXIST));
+                    User user = userMap.get(entity.getUserId());
                     return new TrackRecordDto(
                             entity.getUserId(),
-                            user.getName(), // 또는 getNickname() 등
-                            calculateDuration(entity.getStartedAt(),entity.getFinishedAt())
+                            user.getGrade().getName(),
+                            user.getName(),
+                            user.getLevel(),
+                            (long) entity.getResultTime() // Use the pre-calculated time
                     );
                 })
                 .collect(Collectors.toList());
