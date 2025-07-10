@@ -19,7 +19,7 @@ public record RecordStoreRequest(
         LocalDateTime startedAt,
         LocalDateTime finishedAt,
         double averagePace,
-        long distance
+        long distance,
         List<CoordinateDto> userPath
 ) {
     public Record toRecord(double resultTime){
