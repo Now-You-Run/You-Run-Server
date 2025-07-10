@@ -2,9 +2,13 @@ package com.running.you_run.running.payload.request;
 
 import com.running.you_run.running.Enum.RunningMode;
 import com.running.you_run.running.entity.Record;
+import com.running.you_run.running.payload.dto.CoordinateDto;
+import com.running.you_run.running.util.CoordinateConverter;
+import org.locationtech.jts.geom.LineString;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.List;
 
 public record RecordStoreRequest(
         Long userId,
@@ -16,8 +20,11 @@ public record RecordStoreRequest(
         LocalDateTime finishedAt,
         double averagePace,
         long distance
+        List<CoordinateDto> userPath
 ) {
     public Record toRecord(double resultTime){
+        LineString path = CoordinateConverter.createLineString(userPath);
+
         return Record.builder()
                 .userId(userId())
                 .mode(mode() == null ? null : RunningMode.valueOf(mode()))
@@ -30,6 +37,7 @@ public record RecordStoreRequest(
                 .distance(distance)
                 .resultTime(resultTime)
                 .isPersonalBest(false)
+                .path(path)
                 .build();
     }
 
