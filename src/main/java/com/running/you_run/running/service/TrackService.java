@@ -85,8 +85,8 @@ public class TrackService {
                     User user = userMap.get(entity.getUserId());
                     return new TrackRecordDto(
                             entity.getUserId(),
-                            user.getGrade().getName(),
                             user.getName(),
+                            user.getGrade().getName(),
                             user.getLevel(),
                             (long) entity.getResultTime() // Use the pre-calculated time
                     );
