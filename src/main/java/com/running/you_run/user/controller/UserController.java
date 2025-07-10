@@ -27,16 +27,6 @@ public class UserController {
         return Response.ok(userInfoResponse);
     }
 
-    @PostMapping("/exp")
-    @Operation(
-            summary = "유저 경험치 올리기",
-            description = "경기 결과에 따라 경험치를 올립니다.\n"
-    )
-    public ResponseEntity<?> gainExpUser(@RequestBody UserGainExpRequest request) {
-        UserGradeInfoResponse userGradeInfoResponse = userProfileService.gainExpUser(request);
-        return Response.ok(userGradeInfoResponse);
-    }
-
     @GetMapping("/grade")
     @Operation(
             summary = "등급과 관련된 유저의 정보 로드",

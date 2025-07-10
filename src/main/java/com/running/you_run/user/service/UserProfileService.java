@@ -32,16 +32,6 @@ public class UserProfileService {
                 .orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_EXIST));
         return UserInfoResponse.from(user);
     }
-
-    @Transactional
-    public UserGradeInfoResponse gainExpUser(UserGainExpRequest request) {
-        User user = userRepository.findById(request.userId())
-                .orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_EXIST));
-        user.gainExp(request.distance(), levelCalculator);
-        userRepository.save(user);
-        return UserGradeInfoResponse.from(user);
-    }
-
     @Transactional
     public UserGradeInfoResponse returnUserGradeInfo(Long userId) {
         User user = userRepository.findById(userId)
