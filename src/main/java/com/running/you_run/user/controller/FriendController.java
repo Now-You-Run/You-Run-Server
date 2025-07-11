@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpStatus;
 
 import java.util.List;
 
@@ -62,5 +63,19 @@ public class FriendController {
     public ResponseEntity<?> findAllSentFriends(@RequestParam Long senderId){
         List<FriendListItemDto> userFriend = friendService.findSentFriendRequests(senderId);
         return Response.ok(userFriend);
+    }
+
+    @PostMapping("/request-by-code")
+    public ResponseEntity<String> sendFriendRequestByCode(
+            @RequestParam Long senderId,
+            @RequestParam String code) {
+        try {
+            friendService.sendFriendRequestByCode(senderId, code);
+            return ResponseEntity.ok("친구 요청 완료");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류 발생");
+        }
     }
 }

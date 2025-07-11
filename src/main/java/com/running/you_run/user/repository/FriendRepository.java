@@ -3,6 +3,7 @@ package com.running.you_run.user.repository;
 import com.running.you_run.user.Enum.FriendStatus;
 import com.running.you_run.user.entity.Friend;
 import org.springframework.data.jpa.repository.JpaRepository;
+import com.running.you_run.user.entity.User;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,5 +15,6 @@ public interface FriendRepository extends JpaRepository<Friend, Long> {
     // Find requests received by a user (they are user2) that are WAITING
     List<Friend> findAllByUser2IdAndStatus(Long user2Id, FriendStatus status);
     List<Friend> findAllByUser1IdAndStatusOrUser2IdAndStatus(Long user1Id, FriendStatus status1, Long user2Id, FriendStatus status2);
+    boolean existsBySenderIdAndUser2Id(Long senderId, Long user2Id);
 
 }
