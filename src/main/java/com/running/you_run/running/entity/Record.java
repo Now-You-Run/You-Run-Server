@@ -41,8 +41,6 @@ public class Record {
     @JsonIgnore
     @Column(name = "user_path", columnDefinition = "geometry(LineString,4326)", nullable = true)
     private LineString path;
-    @Column(name = "raw_path_json", columnDefinition = "TEXT", nullable = true)
-    private String rawPathJson;
 
     public Record() {}
     public void updateRecord(LocalDateTime finishedAt, double resultTime, double distance, double averagePace, boolean isWinner, Long opponentId) {
