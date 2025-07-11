@@ -5,6 +5,7 @@ import com.running.you_run.running.payload.request.RunningTrackStoreRequest;
 import com.running.you_run.running.payload.response.TrackListResponse;
 import com.running.you_run.running.payload.response.TrackPagesResponse;
 import com.running.you_run.running.payload.response.TrackRecordResponse;
+import com.running.you_run.running.payload.response.TrackStoreResponse;
 import com.running.you_run.running.service.TrackService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -24,8 +25,8 @@ public class TrackController {
             description = "트랙을 저장합니다.\n"
     )
     public ResponseEntity<?> saveTrack(@RequestBody RunningTrackStoreRequest request) {
-        trackService.storeTrack(request);
-        return Response.ok("success");
+        Long l = trackService.storeTrack(request);
+        return Response.ok(new TrackStoreResponse(l));
     }
 
     @GetMapping("")
