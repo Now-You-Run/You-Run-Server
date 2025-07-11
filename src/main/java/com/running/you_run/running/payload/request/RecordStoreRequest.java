@@ -23,7 +23,7 @@ public record RecordStoreRequest(
         List<CoordinateDto> userPath
 ) {
     public Record toRecord(double resultTime){
-        LineString path = CoordinateConverter.createLineString(userPath);
+        LineString path = CoordinateConverter.createLineStringM(userPath);
 
         return Record.builder()
                 .userId(userId())
