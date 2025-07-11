@@ -1,5 +1,6 @@
 package com.running.you_run.running.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.running.you_run.running.Enum.RunningMode;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -37,8 +38,11 @@ public class Record {
     private double averagePace;
     @Column(nullable = false)
     private boolean isPersonalBest = false; // 기본값은 false
-    @Column(name = "user_path", columnDefinition = "geometry(LineString,4326)")
+    @JsonIgnore
+    @Column(name = "user_path", columnDefinition = "geometry(LineString,4326)", nullable = true)
     private LineString path;
+    @Column(name = "raw_path_json", columnDefinition = "TEXT", nullable = true)
+    private String rawPathJson;
 
     public Record() {}
     public void updateRecord(LocalDateTime finishedAt, double resultTime, double distance, double averagePace, boolean isWinner, Long opponentId) {
