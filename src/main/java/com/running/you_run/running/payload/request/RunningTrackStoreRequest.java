@@ -11,7 +11,8 @@ public record RunningTrackStoreRequest(
         String name,
         int totalDistance,
         double rate,
-        List<CoordinateDto> path // 좌표 리스트
+        List<CoordinateDto> path,
+        int userId
 ) {
     public LineString createLineString() {
         Coordinate[] coords = path.stream()

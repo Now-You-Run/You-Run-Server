@@ -51,7 +51,6 @@ public class TrackService {
                 .startLongitude(startLongitude)
                 .address(address)
                 .build();
-
         trackRepository.save(track);
         return track.getId();
     }

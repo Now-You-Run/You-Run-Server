@@ -1,5 +1,6 @@
 package com.running.you_run.running.entity;
 
+import com.running.you_run.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -34,4 +35,7 @@ public class RunningTrack {
     @Column(nullable = false)
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 }
