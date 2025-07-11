@@ -5,8 +5,6 @@ import com.running.you_run.running.entity.Record;
 import com.running.you_run.running.payload.dto.CoordinateDto;
 import com.running.you_run.running.util.CoordinateConverter;
 import org.locationtech.jts.geom.LineString;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -24,17 +22,8 @@ public record RecordStoreRequest(
         long distance,
         List<CoordinateDto> userPath
 ) {
-    private static final ObjectMapper MAPPER = new ObjectMapper();
-
     public Record toRecord(double resultTime){
         LineString path = CoordinateConverter.createLineString(userPath);
-
-        String rawJson;
-        try {
-            rawJson = MAPPER.writeValueAsString(userPath);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("userPath JSON 직렬화 실패", e);
-        }
 
         return Record.builder()
                 .userId(userId())
@@ -49,7 +38,6 @@ public record RecordStoreRequest(
                 .resultTime(resultTime)
                 .isPersonalBest(false)
                 .path(path)
-                .rawPathJson(rawJson)
                 .build();
     }
 
