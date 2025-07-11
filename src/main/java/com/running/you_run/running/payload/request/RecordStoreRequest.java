@@ -20,7 +20,8 @@ public record RecordStoreRequest(
         LocalDateTime finishedAt,
         double averagePace,
         long distance,
-        List<CoordinateDto> userPath
+        List<CoordinateDto> userPath,
+        Integer botPace
 ) {
     public Record toRecord(double resultTime){
         LineString path = CoordinateConverter.createLineStringM(userPath);
@@ -38,6 +39,7 @@ public record RecordStoreRequest(
                 .resultTime(resultTime)
                 .isPersonalBest(false)
                 .path(path)
+                .botPace(botPace())
                 .build();
     }
 
