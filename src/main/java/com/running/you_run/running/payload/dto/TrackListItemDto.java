@@ -17,7 +17,7 @@ public record TrackListItemDto(
 
 ) {
     public static TrackListItemDto from(RunningTrack track){
-        double epsilon = 0.0002;
+        double epsilon = 0.0003;
         LineString simplifiedLine = (LineString) DouglasPeuckerSimplifier.simplify(track.getPath(), epsilon);
         List<CoordinateDto> coordinateDtos = CoordinateConverter.convertLineStringToCoordinates(simplifiedLine);
         return new TrackListItemDto(track.getId(), track.getName(), track.getTotalDistance(),coordinateDtos);
