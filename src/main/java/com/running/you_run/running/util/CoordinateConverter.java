@@ -20,7 +20,7 @@ public class CoordinateConverter {
         Coordinate[] coordinates = lineString.getCoordinates();
 
         List<CoordinateDto> pathDto = Arrays.stream(coordinates)
-                .map(coord -> new CoordinateDto(coord.y, coord.x)) // JTS: y가 위도, x가 경도
+                .map(coord -> new CoordinateDto(coord.y, coord.x,0L)) // JTS: y가 위도, x가 경도
                 .collect(Collectors.toList());
         return pathDto;
     }
