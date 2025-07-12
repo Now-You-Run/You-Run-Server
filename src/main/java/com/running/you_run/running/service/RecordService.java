@@ -50,6 +50,7 @@ public class RecordService {
 
         List<Long> trackIds = records.stream()
                 .map(Record::getTrackId)
+                .filter(id-> id != null)
                 .distinct()
                 .toList();
 
@@ -59,10 +60,11 @@ public class RecordService {
 
         List<RecordDto> recordDtos = new ArrayList<>();
         for (Record record : records) {
-            RunningTrack track = trackMap.get(record.getTrackId());
-            if (track != null) {
-                recordDtos.add(RecordDto.from(record, TrackInfoDto.convertToResponseDto(track)));
+            RunningTrack track = null;
+            if (record.getTrackId() != null) {
+                track = trackMap.get(record.getTrackId());
             }
+            recordDtos.add(RecordDto.from(record, track != null ? TrackInfoDto.convertToResponseDto(track):null));
         }
         return recordDtos;
     }
