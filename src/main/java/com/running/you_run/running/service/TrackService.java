@@ -37,6 +37,8 @@ public class TrackService {
 
     @Transactional
     public Long storeTrack(RunningTrackStoreRequest request) {
+        User user = userRepository.findById(request.userId())
+                .orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_EXIST));
         double startLatitude = request.path().get(0).latitude();
         double startLongitude = request.path().get(0).longitude();
         String address = kakaoGeoService.getCityDistrict(startLatitude, startLongitude);
@@ -48,6 +50,7 @@ public class TrackService {
                 .startLatitude(startLatitude)
                 .startLongitude(startLongitude)
                 .address(address)
+                .user(user)
                 .build();
         trackRepository.save(track);
         return track.getId();
