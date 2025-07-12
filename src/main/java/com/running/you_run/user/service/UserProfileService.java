@@ -69,9 +69,4 @@ public class UserProfileService {
                 .orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_EXIST));
         return user.getCode();
     }
-
-    public User findUserByQrCode(String qrCode) {
-        return userRepository.findByCode(qrCode)
-                .orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_EXIST));
-    }
 }
