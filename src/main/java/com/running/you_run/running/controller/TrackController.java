@@ -31,8 +31,8 @@ public class TrackController {
 
     @GetMapping("")
     @Operation(
-            summary = "트랙 불러오기",
-            description = "트랙을 불러옵니다.\n"
+            summary = "트랙 상세 정보 불러오기",
+            description = "트랙 상세 정보를 불러옵니다.\n"
     )
     public ResponseEntity<?> returnTrack(@RequestParam Long trackId) {
         TrackRecordResponse trackRecordResponse = trackService.returnTrackRecordResponse(trackId);
@@ -50,19 +50,27 @@ public class TrackController {
     }
 
     @GetMapping("/list/order/close")
+    @Operation(
+            summary = "가까운 트랙 목록 불러오기",
+            description = "사용자 위치에서 가장 가까운 트랙 목록을 불러옵니다. userId가 있으면 사용자 관련 정보를 포함할 수 있습니다."
+    )
     public ResponseEntity<?> returnAllTracksByClose(
             @RequestParam double userLon,
             @RequestParam double userLat,
             @RequestParam int page,
-            @RequestParam int size
+            @RequestParam int size,
+            @RequestParam(required = false) Long userId
     ) {
-        TrackPagesResponse trackPagesResponse =
-                trackService.returnAllTrackRecordResponsesOrderByDb(
-                        page,
-                        size,
-                        userLon,
-                        userLat
-                );
+        TrackPagesResponse trackPagesResponse;
+        if (userId != null) {
+            trackPagesResponse = trackService.returnAllUserTrackRecordResponsesOrderByDb(
+                    page, size, userId, userLon, userLat
+            );
+        } else {
+            trackPagesResponse = trackService.returnAllTrackRecordResponsesOrderByDb(
+                    page, size, userLon, userLat
+            );
+        }
         return Response.ok(trackPagesResponse);
     }
 

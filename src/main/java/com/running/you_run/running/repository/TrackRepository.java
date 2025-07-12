@@ -13,8 +13,8 @@ public interface TrackRepository extends JpaRepository<RunningTrack, Long> {
     @Query(value = """
             SELECT *,
               ST_Distance(
-                ST_SetSRID(ST_MakePoint(:userLon, :userLat), 4326),
-                path
+                ST_SetSRID(ST_MakePoint(:userLon, :userLat), 4326)::geography,
+                path::geography
               ) AS distance
             FROM track
             ORDER BY distance ASC
@@ -24,6 +24,25 @@ public interface TrackRepository extends JpaRepository<RunningTrack, Long> {
     Page<RunningTrack> findTracksOrderByDistance(
             @Param("userLon") double userLon,
             @Param("userLat") double userLat,
+            Pageable pageable
+    );
+
+    @Query(value = """
+            SELECT *,
+              ST_Distance(
+                ST_SetSRID(ST_MakePoint(:userLon, :userLat), 4326)::geography,
+                path::geography
+              ) AS distance
+            FROM track
+            WHERE user_id = :userId
+            ORDER BY distance ASC
+            """,
+            countQuery = "SELECT count(*) FROM track WHERE user_id = :userId",
+            nativeQuery = true)
+    Page<RunningTrack> findUserTracksOrderByDistance(
+            @Param("userLon") double userLon,
+            @Param("userLat") double userLat,
+            @Param("userId") long userId,
             Pageable pageable
     );
 
