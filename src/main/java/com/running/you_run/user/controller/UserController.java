@@ -46,4 +46,17 @@ public class UserController {
         UserInfoResponse userInfoResponse = userProfileService.returnUserProfile(userId);
         return Response.ok(userInfoResponse);
     }
+
+    @PostMapping("{userId}/qr-refresh")
+    public ResponseEntity<Response> refreshQrCode(@PathVariable Long userId) {
+        String newCode = userProfileService.refreshQrCode(userId);
+        return ResponseEntity.ok(Response.success(newCode));
+    }
+
+    @GetMapping("{userId}/code")
+    public ResponseEntity<Response> getQrCode(@PathVariable Long userId) {
+        String code = userProfileService.getQrCode(userId);
+        return ResponseEntity.ok(Response.success(code));
+    }
+
 }

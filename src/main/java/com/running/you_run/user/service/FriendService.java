@@ -136,4 +136,32 @@ public class FriendService {
                 .map(friend -> FriendListItemDto.from(friend, userId))
                 .toList();
     }
+
+    public void sendFriendRequestByCode(Long senderId, String code) {
+        User sender = userRepository.findById(senderId)
+                .orElseThrow(() -> new IllegalArgumentException("보내는 유저가 존재하지 않습니다."));
+
+        User receiver = userRepository.findByCode(code)
+                .orElseThrow(() -> new IllegalArgumentException("해당 코드의 유저가 존재하지 않습니다."));
+
+        if (sender.getId().equals(receiver.getId())) {
+            throw new IllegalArgumentException("자기 자신에게 친구 요청을 보낼 수 없습니다.");
+        }
+
+        // 이미 요청이 있는지 확인
+        boolean alreadyRequested = friendRepository.existsBySenderIdAndUser2Id(sender.getId(), receiver.getId());
+        if (alreadyRequested) {
+            throw new IllegalArgumentException("이미 해당 유저에게 친구 요청을 보냈습니다.");
+        }
+
+        // 친구 요청 생성
+        Friend friendRequest = Friend.builder()
+                .user1(sender)
+                .user2(receiver)
+                .senderId(sender.getId())
+                .status(FriendStatus.WAITING)
+                .build();
+
+        friendRepository.save(friendRequest);
+    }
 }

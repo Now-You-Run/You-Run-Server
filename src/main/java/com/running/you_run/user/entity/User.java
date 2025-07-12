@@ -17,6 +17,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "app_user")
@@ -76,10 +77,36 @@ public class User {
     @Column
     private Long totalDistance;
 
+
+
+    @Column(unique = true)
+    private String code;
+
+    @Column
+    private LocalDateTime codeUpdatedAt;
+
     @PrePersist
     public void prePersist() {
         if (this.totalDistance == null) this.totalDistance = 0L;
         if (this.level == null) this.level = 1;
+        if (this.code == null) this.code = generateRandomCode();
+
+    }
+
+    public LocalDateTime getCodeUpdatedAt() {
+        return codeUpdatedAt;
+    }
+
+    public void setCodeUpdatedAt(LocalDateTime codeUpdatedAt) {
+        this.codeUpdatedAt = codeUpdatedAt;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    private String generateRandomCode() {
+        return UUID.randomUUID().toString().substring(0, 8).toUpperCase();
     }
 
     public User() {

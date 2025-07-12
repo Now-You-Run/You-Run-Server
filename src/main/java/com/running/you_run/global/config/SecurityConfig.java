@@ -35,6 +35,7 @@ public class SecurityConfig {
                                 "/race-results/**",
                                 "/api/track/**",
                                 "/api/track",
+                                "/api/qrcode/**",
                                 "/api/record/**",
                                 "/api/public/**",
                                 "/swagger-ui/**",

@@ -27,4 +27,8 @@ public record Response<T>(
         return new Response<>(errorCode.getCode(), errorCode.getMessage(), null);
     }
 
+    public static <T> Response<T> success(T data) {
+        return new Response<>(OK_CODE, OK_MESSAGE, data);
+    }
+
 }
