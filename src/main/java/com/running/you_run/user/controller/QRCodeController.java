@@ -1,3 +1,4 @@
+// QR 컨트롤러 로직
 package com.running.you_run.user.controller;
 
 import com.google.zxing.*;
