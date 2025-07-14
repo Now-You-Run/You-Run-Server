@@ -141,6 +141,7 @@ public class TrackService {
                 .map(entity -> {
                     User user = userMap.get(entity.getUserId());
                     return new TrackRecordDto(
+                            entity.getId(),
                             entity.getUserId(),
                             user.getName(),
                             user.getGrade().getName(),

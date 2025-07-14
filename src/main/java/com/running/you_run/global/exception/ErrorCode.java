@@ -22,7 +22,9 @@ public enum ErrorCode {
 
     TRACK_NOT_EXIST(HttpStatus.BAD_REQUEST,"800-1","없는 트랙입니다."),
     INVALID_TRACK_PATH(HttpStatus.BAD_REQUEST,"800-2","유효하지 않은 트랙입니다."),
-    INSUFFICIENT_TRACK_POINTS(HttpStatus.BAD_REQUEST, "800-3", "트랙 저장에 충분하지 않은 포인트 수입니다.");
+    INSUFFICIENT_TRACK_POINTS(HttpStatus.BAD_REQUEST, "800-3", "트랙 저장에 충분하지 않은 포인트 수입니다."),
+
+    RECORD_NOT_EXIST(HttpStatus.BAD_REQUEST, "900-1", "존재하지 않는 기록입니다.");
 
     private final HttpStatus httpStatus;
     private final String code;
