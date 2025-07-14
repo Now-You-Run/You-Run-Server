@@ -13,14 +13,15 @@ public record TrackListItemDto(
         Long id,
         String name,
         int distance,
-        List<CoordinateDto> path
+        List<CoordinateDto> path,
+        String thumbnailUrl
 
 ) {
     public static TrackListItemDto from(RunningTrack track){
         double epsilon = 0.0003;
         LineString simplifiedLine = (LineString) DouglasPeuckerSimplifier.simplify(track.getPath(), epsilon);
         List<CoordinateDto> coordinateDtos = CoordinateConverter.convertLineStringToCoordinates(simplifiedLine);
-        return new TrackListItemDto(track.getId(), track.getName(), track.getTotalDistance(),coordinateDtos);
+        return new TrackListItemDto(track.getId(), track.getName(), track.getTotalDistance(),coordinateDtos, track.getThumbnailUrl());
     }
 
 }

@@ -35,7 +35,7 @@ public class TrackController {
             description = "트랙 상세 정보를 불러옵니다.\n"
     )
     public ResponseEntity<?> returnTrack(@RequestParam Long trackId) {
-        TrackRecordResponse trackRecordResponse = trackService.returnTrackRecordResponse(trackId);
+        TrackRecordResponse trackRecordResponse = trackService.getTrackRecordResponse(trackId);
         return Response.ok(trackRecordResponse);
     }
 
@@ -45,7 +45,7 @@ public class TrackController {
             description = "모든 트랙을 불러옵니다.\n"
     )
     public ResponseEntity<?> returnAllTracks() {
-        TrackListResponse trackListResponses = trackService.returnAllTrackRecordResponses();
+        TrackListResponse trackListResponses = trackService.getAllTrackRecords();
         return Response.ok(trackListResponses);
     }
 
@@ -63,15 +63,14 @@ public class TrackController {
     ) {
         TrackPagesResponse trackPagesResponse;
         if (userId != null) {
-            trackPagesResponse = trackService.returnAllUserTrackRecordResponsesOrderByDb(
+            trackPagesResponse = trackService.getUserTracksOrderByDistance(
                     page, size, userId, userLon, userLat
             );
         } else {
-            trackPagesResponse = trackService.returnAllTrackRecordResponsesOrderByDb(
+            trackPagesResponse = trackService.getTracksOrderByDistance(
                     page, size, userLon, userLat
             );
         }
         return Response.ok(trackPagesResponse);
     }
-
 }

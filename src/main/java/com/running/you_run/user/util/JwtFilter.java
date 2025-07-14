@@ -35,6 +35,7 @@ public class JwtFilter extends OncePerRequestFilter {
             "/swagger-ui/**",
             "/v3/api-docs/**",
             "/favicon.ico",
+            "/api/**",
             "/mypage/**"
     );
 

@@ -28,28 +28,20 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(authorize -> authorize
                         // JwtFilter의 NO_AUTH_REQUIRED_URLS 와 유사하게 설정
-                        .requestMatchers(
-                                "/api/**",
-                                "/api/auth/**",
-                                "/mypage/**",
-                                "/race-results/**",
-                                "/api/track/**",
-                                "/api/track",
-                                "/api/qrcode/**",
-                                "/api/record/**",
-                                "/api/public/**",
-                                "/swagger-ui/**",
-                                "/swagger-ui.html",
-                                "/v3/api-docs/**",
-                                "/login/oauth2/code/**",
-                                "/favicon.ico"
-                        ).permitAll() // 이 경로들은 인증 없이 접근 허용
-                        .anyRequest().authenticated() // 나머지 모든 요청은 반드시 인증 필요
-                )
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-                .exceptionHandling(exception ->
-                        exception.authenticationEntryPoint(new CustomAuthenticationEntryPoint())
+//                        .requestMatchers(
+//                                "/swagger-ui/**",
+//                                "/swagger-ui.html",
+//                                "/v3/api-docs/**",
+//                                "/login/oauth2/code/**",
+//                                "/favicon.ico"
+//                        ).permitAll() // 이 경로들은 인증 없이 접근 허용
+//                        .anyRequest().authenticated() // 나머지 모든 요청은 반드시 인증 필요
+                                .anyRequest().permitAll()
                 );
+//                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+//                .exceptionHandling(exception ->
+//                        exception.authenticationEntryPoint(new CustomAuthenticationEntryPoint())
+//                );
 
 
         return http.build();

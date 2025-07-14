@@ -2,10 +2,7 @@ package com.running.you_run.running.entity;
 
 import com.running.you_run.user.entity.User;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.locationtech.jts.geom.LineString;
@@ -35,6 +32,8 @@ public class RunningTrack {
     @Column(nullable = false)
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+    @Setter
+    private String thumbnailUrl;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
