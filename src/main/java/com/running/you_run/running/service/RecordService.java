@@ -96,4 +96,13 @@ public class RecordService {
                         () -> newRecord.markAsPersonalBest()
                 );
     }
+
+    @Transactional
+    public RecordDto findById(Long recordId) {
+        Record record = recordRepository.findById(recordId)
+                .orElseThrow(() -> new ApiException(ErrorCode.RECORD_NOT_EXIST));
+        // (만약 userPath나 좌표, 시간 등은 record에서 꺼내서 dto로 변환)
+        return RecordDto.from(record, /* 필요시 trackInfoDto */ null);
+    }
+
 }
