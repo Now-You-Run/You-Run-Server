@@ -17,6 +17,7 @@ public interface TrackRepository extends JpaRepository<RunningTrack, Long> {
                 path::geography
               ) AS distance
             FROM track
+            WHERE user_id IS NULL
             ORDER BY distance ASC
             """,
             countQuery = "SELECT count(*) FROM track",
