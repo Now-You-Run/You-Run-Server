@@ -2,10 +2,7 @@ package com.running.you_run.running.controller;
 
 import com.running.you_run.global.payload.Response;
 import com.running.you_run.running.payload.request.RunningTrackStoreRequest;
-import com.running.you_run.running.payload.response.TrackListResponse;
-import com.running.you_run.running.payload.response.TrackPagesResponse;
-import com.running.you_run.running.payload.response.TrackRecordResponse;
-import com.running.you_run.running.payload.response.TrackStoreResponse;
+import com.running.you_run.running.payload.response.*;
 import com.running.you_run.running.service.TrackService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -29,13 +26,33 @@ public class TrackController {
         return Response.ok(new TrackStoreResponse(l));
     }
 
+    @PostMapping("/admin")
+    @Operation(
+            summary = "서버 트랙 저장하기",
+            description = "서버 트랙을 저장합니다.\n"
+    )
+    public ResponseEntity<?> saveServerTrack(@RequestBody RunningTrackStoreRequest request) {
+        Long l = trackService.storeServerTrack(request);
+        return Response.ok(new TrackStoreResponse(l));
+    }
+
     @GetMapping("")
     @Operation(
-            summary = "트랙 상세 정보 불러오기",
-            description = "트랙 상세 정보를 불러옵니다.\n"
+            summary = "서버 트랙 상세 정보 불러오기",
+            description = "서버 트랙 상세 정보를 불러옵니다.\n"
     )
-    public ResponseEntity<?> returnTrack(@RequestParam Long trackId) {
-        TrackRecordResponse trackRecordResponse = trackService.getTrackRecordResponse(trackId);
+    public ResponseEntity<?> returnServerTrack(@RequestParam Long trackId) {
+        TrackRecordResponse trackRecordResponse = trackService.getServerTrackRecordResponse(trackId);
+        return Response.ok(trackRecordResponse);
+    }
+
+    @GetMapping("/my")
+    @Operation(
+            summary = "마이 트랙 상세 정보 불러오기",
+            description = "마이 트랙 상세 정보를 불러옵니다.\n"
+    )
+    public ResponseEntity<?> returnMyTrack(@RequestParam Long trackId) {
+        MyTrackRecordListResponse trackRecordResponse = trackService.getMyTrackRecordResponse(trackId);
         return Response.ok(trackRecordResponse);
     }
 

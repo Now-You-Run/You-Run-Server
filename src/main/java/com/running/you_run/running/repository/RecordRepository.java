@@ -8,6 +8,7 @@ import java.util.Optional;
 
 public interface RecordRepository extends JpaRepository<Record, Long> {
     List<Record> findByTrackId(Long trackId);
+    List<Record> findByTrackIdOrderByResultTime(Long trackId);
     List<Record> findAllById(Long id);
     List<Record> findByUserId(Long userId);
     Optional<Record> findByUserIdAndTrackId(Long userId, Long trackId);

@@ -4,11 +4,9 @@ import com.running.you_run.global.exception.ApiException;
 import com.running.you_run.global.exception.ErrorCode;
 import com.running.you_run.running.entity.Record;
 import com.running.you_run.running.entity.RunningTrack;
-import com.running.you_run.running.payload.dto.CoordinateDto;
-import com.running.you_run.running.payload.dto.TrackInfoDto;
-import com.running.you_run.running.payload.dto.TrackListItemDto;
-import com.running.you_run.running.payload.dto.TrackRecordDto;
+import com.running.you_run.running.payload.dto.*;
 import com.running.you_run.running.payload.request.RunningTrackStoreRequest;
+import com.running.you_run.running.payload.response.MyTrackRecordListResponse;
 import com.running.you_run.running.payload.response.TrackListResponse;
 import com.running.you_run.running.payload.response.TrackPagesResponse;
 import com.running.you_run.running.payload.response.TrackRecordResponse;
@@ -82,6 +80,39 @@ public class TrackService {
         return savedTrack.getId();
     }
     @Transactional
+    public Long storeServerTrack(RunningTrackStoreRequest request) {
+        // 입력 검증
+        if (request.path() == null || request.path().isEmpty()) {
+            throw new ApiException(ErrorCode.INVALID_TRACK_PATH);
+        }
+
+        if (request.path().size() < 2) {
+            throw new ApiException(ErrorCode.INSUFFICIENT_TRACK_POINTS);
+        }
+
+
+        double startLatitude = request.path().get(0).latitude();
+        double startLongitude = request.path().get(0).longitude();
+        String address = kakaoGeoService.getCityDistrict(startLatitude, startLongitude);
+
+        RunningTrack track = RunningTrack.builder()
+                .name(request.name())
+                .totalDistance(request.totalDistance())
+                .rate(request.rate())
+                .path(request.createLineString())
+                .startLatitude(startLatitude)
+                .startLongitude(startLongitude)
+                .address(address)
+                .build();
+
+        RunningTrack savedTrack = trackRepository.save(track);
+
+        // 비동기로 썸네일 생성
+        generateAndUploadThumbnailAsync(savedTrack.getId(), request.path());
+
+        return savedTrack.getId();
+    }
+    @Transactional
     public TrackInfoDto getTrack(Long trackId) {
         RunningTrack track = trackRepository.findById(trackId)
                 .orElseThrow(() -> new ApiException(ErrorCode.TRACK_NOT_EXIST));
@@ -89,7 +120,7 @@ public class TrackService {
     }
 
     @Transactional
-    public TrackRecordResponse getTrackRecordResponse(Long trackId) {
+    public TrackRecordResponse getServerTrackRecordResponse(Long trackId) {
         RunningTrack track = trackRepository.findById(trackId)
                 .orElseThrow(() -> new ApiException(ErrorCode.TRACK_NOT_EXIST));
 
@@ -122,6 +153,28 @@ public class TrackService {
         TrackInfoDto trackInfoDto = TrackInfoDto.convertToResponseDto(track);
 
         return new TrackRecordResponse(trackInfoDto, records);
+    }
+    @Transactional
+    public MyTrackRecordListResponse getMyTrackRecordResponse(Long trackId) {
+        RunningTrack track = trackRepository.findById(trackId)
+                .orElseThrow(() -> new ApiException(ErrorCode.TRACK_NOT_EXIST));
+
+        List<Record> recordEntities = recordRepository
+                .findByTrackIdOrderByResultTime(trackId);
+
+        List<MyTrackRecordListItemDto> records = recordEntities.stream()
+                .map(entity -> {
+                    return new MyTrackRecordListItemDto(
+                            entity.getId(),
+                            entity.getResultTime(),
+                            entity.getFinishedAt()
+                    );
+                })
+                .collect(Collectors.toList());
+
+        TrackInfoDto trackInfoDto = TrackInfoDto.convertToResponseDto(track);
+
+        return new MyTrackRecordListResponse(trackInfoDto, records);
     }
 
     @Transactional
