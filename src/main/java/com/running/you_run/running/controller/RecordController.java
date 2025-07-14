@@ -42,4 +42,14 @@ public class RecordController {
         return Response.ok(allRecordById);
     }
 
+    @GetMapping("/{recordId}")
+    @Operation(
+            summary = "기록 단건 상세조회",
+            description = "특정 recordId에 대한 상세정보를 반환합니다. (userPath 등 포함)"
+    )
+    public ResponseEntity<?> getRecordDetail(@PathVariable Long recordId) {
+        RecordDto recordDto = recordService.findById(recordId); // 이 함수는 서비스에 구현해야 함
+        return Response.ok(recordDto);
+    }
+
 }
