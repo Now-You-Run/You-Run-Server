@@ -13,17 +13,15 @@ import java.util.List;
 @AllArgsConstructor
 public class ChatMessage {
     private String sender;
-    private int senderId;
+    private long senderId;
     private String content;
     private MessageType type;
     private String roomId;
     private String createdAt;
-    private List<Integer> readBy = new ArrayList<>();
+    private List<Long> readBy = new ArrayList<>();
 
     public enum MessageType {
         TALK, JOIN, LEAVE
     }
-
-    // getters/setters
 }
 

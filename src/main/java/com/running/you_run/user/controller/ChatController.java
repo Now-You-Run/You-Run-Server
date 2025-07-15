@@ -21,7 +21,6 @@ public class ChatController {
 
     private final SimpMessagingTemplate messagingTemplate;
 
-    // 방별 메시지 in-memory 저장 (추후 DB 연동시 대체 가능)
     private final Map<String, List<ChatMessage>> chatRooms = new ConcurrentHashMap<>();
 
     public ChatController(SimpMessagingTemplate messagingTemplate) {
@@ -75,14 +74,12 @@ public class ChatController {
 
         for (ChatMessage msg : messages) {
             if (!msg.getReadBy().contains(userId)) {
-                msg.getReadBy().add(userId);
+                msg.getReadBy().add((long) userId);
             }
         }
 
-        // ✅ 메시지 업데이트 후 구독자에게 재전송하여 실시간 읽음 상태 갱신
         messagingTemplate.convertAndSend("/topic/room/" + roomId, messages);
 
-        // 필요시 별도의 read-receipt topic으로 전송하여 UI 알림에도 활용 가능
         messagingTemplate.convertAndSend(
                 "/topic/room/" + roomId + "/read-receipt",
                 readReceipt
