@@ -1,5 +1,6 @@
 package com.running.you_run.user.entity;
 
+import com.running.you_run.user.Enum.Gender;
 import com.running.you_run.user.Enum.UserGrade;
 import com.running.you_run.user.Enum.UserRole;
 import com.running.you_run.user.payload.request.UserUpdateProfileReqeust;
@@ -77,7 +78,15 @@ public class User {
     @Column
     private Long totalDistance;
 
+    @Column
+    @Enumerated(EnumType.STRING)
+    @Setter
+    private Gender gender;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "selected_avatar_id")
+    @Setter
+    private Avatar selectedAvatar;
 
     @Column(unique = true)
     private String code;
@@ -125,5 +134,9 @@ public class User {
         this.point += point;
         this.level = newLevel;
         this.grade = UserGrade.fromTotalDistance(this.level);
+    }
+
+    public void setPoint(long point) {
+        this.point = point;
     }
 }
