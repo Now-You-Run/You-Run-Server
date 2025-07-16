@@ -70,6 +70,11 @@ public class User {
     @Column(columnDefinition = "int default 1")
     private Integer level;
 
+    @Setter
+    @Column
+    @Builder.Default
+    private Double averagePace = 0.0;
+
     @Column
     @Enumerated(EnumType.STRING)
     @Builder.Default
@@ -99,6 +104,7 @@ public class User {
         if (this.totalDistance == null) this.totalDistance = 0L;
         if (this.level == null) this.level = 1;
         if (this.code == null) this.code = generateRandomCode();
+        if (this.averagePace == null) this.averagePace = 0.0;
 
     }
 
