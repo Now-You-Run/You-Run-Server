@@ -24,8 +24,11 @@ public enum ErrorCode {
     INVALID_TRACK_PATH(HttpStatus.BAD_REQUEST,"800-2","유효하지 않은 트랙입니다."),
     INSUFFICIENT_TRACK_POINTS(HttpStatus.BAD_REQUEST, "800-3", "트랙 저장에 충분하지 않은 포인트 수입니다."),
 
-    RECORD_NOT_EXIST(HttpStatus.BAD_REQUEST, "900-1", "존재하지 않는 기록입니다.");
-
+    RECORD_NOT_EXIST(HttpStatus.BAD_REQUEST, "900-1", "존재하지 않는 기록입니다."),
+    AVATAR_NOT_EXIST(HttpStatus.BAD_REQUEST, "720-1", "존재하지 않는 아바타입니다."),
+    AVATAR_ALREADY_OWNED(HttpStatus.BAD_REQUEST, "720-2", "이미 소유한 아바타입니다."),
+    AVATAR_INSUFFICIENT_POINT(HttpStatus.BAD_REQUEST, "720-3", "포인트가 부족합니다."),
+    AVATAR_NOT_OWNED(HttpStatus.BAD_REQUEST, "720-4", "소유하지 않은 아바타는 선택할 수 없습니다.");
     private final HttpStatus httpStatus;
     private final String code;
     private final String message;
