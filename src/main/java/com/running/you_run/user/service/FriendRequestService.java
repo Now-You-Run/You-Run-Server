@@ -4,7 +4,6 @@ import com.running.you_run.user.Enum.FriendStatus;
 import com.running.you_run.user.dto.FriendRequestNotificationDto;
 import com.running.you_run.user.entity.Friend;
 import com.running.you_run.user.entity.User;
-import com.running.you_run.user.repository.FriendRepository;
 import com.running.you_run.user.repository.FriendRequestRepository;
 import com.running.you_run.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
