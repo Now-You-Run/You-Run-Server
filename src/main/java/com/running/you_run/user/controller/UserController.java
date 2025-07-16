@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.running.you_run.user.payload.request.UpdateAveragePaceRequest;
 
 @RestController
 @RequestMapping("/api/user")
@@ -59,4 +60,12 @@ public class UserController {
         return ResponseEntity.ok(Response.success(code));
     }
 
+    @PatchMapping("/average-pace")
+    public ResponseEntity<Void> updateAveragePace(
+            @RequestParam Long userId,
+            @RequestBody UpdateAveragePaceRequest req
+    ) {
+        userProfileService.updateAveragePace(userId, req.averagePace());
+        return ResponseEntity.noContent().build();
+    }
 }
