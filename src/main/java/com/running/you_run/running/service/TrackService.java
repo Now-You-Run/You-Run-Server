@@ -2,6 +2,7 @@ package com.running.you_run.running.service;
 
 import com.running.you_run.global.exception.ApiException;
 import com.running.you_run.global.exception.ErrorCode;
+import com.running.you_run.running.Enum.TrackStatus;
 import com.running.you_run.running.entity.Record;
 import com.running.you_run.running.entity.RunningTrack;
 import com.running.you_run.running.payload.dto.*;
@@ -78,6 +79,15 @@ public class TrackService {
         generateAndUploadThumbnailAsync(savedTrack.getId(), request.path());
 
         return savedTrack.getId();
+    }
+    @Transactional
+    public void deleteMyTrack(Long trackId, Long userId){
+        RunningTrack runningTrack = trackRepository.findById(trackId)
+                .orElseThrow(() -> new ApiException(ErrorCode.TRACK_NOT_EXIST));
+        if (!runningTrack.getUser().getId().equals(userId)) {
+            throw new ApiException(ErrorCode.USER_UNAUTHORIZED); // 또는 권한 없음 에러 코드
+        }
+        runningTrack.setTrackStatus(TrackStatus.DELETED);
     }
 
     @Transactional

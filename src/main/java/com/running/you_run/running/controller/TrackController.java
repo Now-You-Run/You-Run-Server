@@ -55,6 +55,17 @@ public class TrackController {
         MyTrackRecordListResponse trackRecordResponse = trackService.getMyTrackRecordResponse(trackId);
         return Response.ok(trackRecordResponse);
     }
+    @DeleteMapping("/my")
+    @Operation(
+            summary = "마이 트랙 삭제",
+            description = "마이 트랙 삭제.\n"
+    )
+    public ResponseEntity<?> deleteMyTrack(@RequestParam Long trackId,
+                                           @RequestParam Long userId
+    ) {
+        trackService.deleteMyTrack(trackId, userId);
+        return Response.ok(true);
+    }
 
     @GetMapping("/list")
     @Operation(
@@ -114,4 +125,6 @@ public class TrackController {
         }
         return Response.ok(trackPagesResponse);
     }
+
+
 }
