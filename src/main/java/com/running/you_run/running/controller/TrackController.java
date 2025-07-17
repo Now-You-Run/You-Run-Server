@@ -99,16 +99,17 @@ public class TrackController {
     public ResponseEntity<?> returnAllTracksByClose(
             @RequestParam int page,
             @RequestParam int size,
+            @RequestParam String order,
             @RequestParam(required = false) Long userId
     ) {
         TrackPagesResponse trackPagesResponse;
         if (userId != null) {
             trackPagesResponse = trackService.getUserTracksOrderByTotalDistance(
-                    page, size, userId
+                    page, size, order,userId
             );
         } else {
             trackPagesResponse = trackService.getTracksOrderByTotalDistance(
-                    page, size
+                    page, size, order
             );
         }
         return Response.ok(trackPagesResponse);

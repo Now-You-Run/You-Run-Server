@@ -49,5 +49,7 @@ public interface TrackRepository extends JpaRepository<RunningTrack, Long> {
     );
 
     Page<RunningTrack> findAllByOrderByTotalDistanceAsc(Pageable pageable);
+    Page<RunningTrack> findAllByOrderByTotalDistanceDesc(Pageable pageable);
     Page<RunningTrack> findByUserIdOrderByTotalDistanceAsc(Long userId, Pageable pageable);
+    Page<RunningTrack> findByUserIdOrderByTotalDistanceDesc(Long userId, Pageable pageable);
 }
