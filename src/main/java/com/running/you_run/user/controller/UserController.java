@@ -1,21 +1,31 @@
 package com.running.you_run.user.controller;
 
 import com.running.you_run.global.payload.Response;
+import com.running.you_run.user.entity.FriendPointHistory;
 import com.running.you_run.user.payload.request.UserGainExpRequest;
 import com.running.you_run.user.payload.request.UserUpdateProfileReqeust;
 import com.running.you_run.user.payload.response.UserGradeInfoResponse;
 import com.running.you_run.user.payload.response.UserInfoResponse;
+import com.running.you_run.user.repository.FriendPointHistoryRepository;
 import com.running.you_run.user.service.UserProfileService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.running.you_run.user.entity.User;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.time.Instant;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/user")
 @RequiredArgsConstructor
 public class UserController {
     private final UserProfileService userProfileService;
+    private final FriendPointHistoryRepository friendPointHistoryRepository;
 
     @PatchMapping("")
     @Operation(
@@ -59,4 +69,61 @@ public class UserController {
         return ResponseEntity.ok(Response.success(code));
     }
 
+    @PatchMapping("/{receiverId}/point")
+    public ResponseEntity<?> sendPoint(
+            @PathVariable Long receiverId,
+            @RequestParam Long senderId,
+            @RequestParam Integer point
+    ) {
+        try {
+            userProfileService.sendPoint(senderId, receiverId, point);
+
+            Instant now = Instant.now(); // 현재 UTC 시각
+            String nowString = now.toString(); // ISO 8601 문자열 (예: "2025-07-17T07:31:00Z")
+
+            FriendPointHistory history = new FriendPointHistory();
+            history.setSenderId(senderId);
+            history.setReceiverId(receiverId);
+            history.setPoint(point);
+            history.setSentAt(Instant.now());
+
+            friendPointHistoryRepository.save(history);
+
+            return ResponseEntity.ok(Map.of(
+                    "statuscode", "200",
+                    "message", "포인트 전송 완료",
+                    "sentAt", nowString
+            ));
+        } catch (IllegalStateException e) {
+            return ResponseEntity.badRequest().body(Map.of(
+                    "statuscode", "400",
+                    "message", e.getMessage()
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(Map.of(
+                    "statuscode", "500",
+                    "message", "서버 오류: " + e.getMessage()
+            ));
+        }
+    }
+
+    @GetMapping("/{userId}/point-history")
+    public ResponseEntity<?> getPointHistory(@PathVariable Long userId) {
+        List<FriendPointHistory> histories = friendPointHistoryRepository.findBySenderId(userId);
+
+        List<Map<String, Object>> response = histories.stream()
+                .map(h -> {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("receiverId", h.getReceiverId());
+                    map.put("sentAt", h.getSentAt());
+                    return map;
+                })
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(Map.of(
+                "statuscode", "200",
+                "message", "포인트 전송 기록 조회 성공",
+                "data", response
+        ));
+    }
 }

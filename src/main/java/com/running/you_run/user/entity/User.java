@@ -67,6 +67,10 @@ public class User {
     @Column(columnDefinition = "BIGINT default 0")
     private long point;
 
+    public void setPoint(Integer point) {
+        this.point = point;
+    }
+
     @Column(columnDefinition = "int default 1")
     private Integer level;
 
