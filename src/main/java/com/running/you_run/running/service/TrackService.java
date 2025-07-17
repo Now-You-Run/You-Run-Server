@@ -237,9 +237,9 @@ public class TrackService {
         Pageable pageable = PageRequest.of(page, size);
         Page<RunningTrack> tracksPage;
         if (order.equals("asc")){
-            tracksPage = trackRepository.findAllByOrderByTotalDistanceAsc(pageable);
+            tracksPage = trackRepository.findAllByUserIsNullOrderByTotalDistanceAsc(pageable);
         } else {
-            tracksPage = trackRepository.findAllByOrderByTotalDistanceDesc(pageable);
+            tracksPage = trackRepository.findAllByUserIsNullOrderByTotalDistanceDesc(pageable);
         }
         return TrackListResponse
                 .convertRunningTracksToTrackPagesResponse(

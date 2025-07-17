@@ -48,8 +48,13 @@ public interface TrackRepository extends JpaRepository<RunningTrack, Long> {
             Pageable pageable
     );
 
-    Page<RunningTrack> findAllByOrderByTotalDistanceAsc(Pageable pageable);
-    Page<RunningTrack> findAllByOrderByTotalDistanceDesc(Pageable pageable);
+    Page<RunningTrack> findAllByUserIsNullOrderByTotalDistanceAsc(Pageable pageable);
+
+    /**
+     * 사용자가 없는(공용) 모든 트랙을 총 거리가 긴 순(내림차순)으로 정렬하여 조회합니다.
+     * RunningTrack 엔티티의 user 필드가 NULL인 것을 조건으로 합니다.
+     */
+    Page<RunningTrack> findAllByUserIsNullOrderByTotalDistanceDesc(Pageable pageable);
     Page<RunningTrack> findByUserIdOrderByTotalDistanceAsc(Long userId, Pageable pageable);
     Page<RunningTrack> findByUserIdOrderByTotalDistanceDesc(Long userId, Pageable pageable);
 }
