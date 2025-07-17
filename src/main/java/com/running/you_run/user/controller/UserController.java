@@ -126,7 +126,7 @@ public class UserController {
                 "message", "포인트 전송 기록 조회 성공",
                 "data", response
         ));
-      
+    }
     @PatchMapping("/average-pace")
     public ResponseEntity<Void> updateAveragePace(
             @RequestParam Long userId,

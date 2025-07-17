@@ -127,6 +127,7 @@ public class UserProfileService {
         transaction.setSentAt(now);
 
         pointTransactionRepository.save(transaction);
+    }
     @Transactional
     public void updateAveragePace(Long userId, Double pace) {
         User user = userRepository.findById(userId)
