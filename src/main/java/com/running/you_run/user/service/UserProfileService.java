@@ -127,5 +127,11 @@ public class UserProfileService {
         transaction.setSentAt(now);
 
         pointTransactionRepository.save(transaction);
+    @Transactional
+    public void updateAveragePace(Long userId, Double pace) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_EXIST));
+        user.setAveragePace(pace);
+        userRepository.save(user);
     }
 }

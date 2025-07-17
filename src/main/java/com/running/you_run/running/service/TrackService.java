@@ -2,6 +2,7 @@ package com.running.you_run.running.service;
 
 import com.running.you_run.global.exception.ApiException;
 import com.running.you_run.global.exception.ErrorCode;
+import com.running.you_run.running.Enum.TrackStatus;
 import com.running.you_run.running.entity.Record;
 import com.running.you_run.running.entity.RunningTrack;
 import com.running.you_run.running.payload.dto.*;
@@ -80,6 +81,16 @@ public class TrackService {
         return savedTrack.getId();
     }
     @Transactional
+    public void deleteMyTrack(Long trackId, Long userId){
+        RunningTrack runningTrack = trackRepository.findById(trackId)
+                .orElseThrow(() -> new ApiException(ErrorCode.TRACK_NOT_EXIST));
+        if (!runningTrack.getUser().getId().equals(userId)) {
+            throw new ApiException(ErrorCode.USER_UNAUTHORIZED); // 또는 권한 없음 에러 코드
+        }
+        runningTrack.setTrackStatus(TrackStatus.DELETED);
+    }
+
+    @Transactional
     public Long storeServerTrack(RunningTrackStoreRequest request) {
         // 입력 검증
         if (request.path() == null || request.path().isEmpty()) {
@@ -112,6 +123,7 @@ public class TrackService {
 
         return savedTrack.getId();
     }
+
     @Transactional
     public TrackInfoDto getTrack(Long trackId) {
         RunningTrack track = trackRepository.findById(trackId)
@@ -155,6 +167,7 @@ public class TrackService {
 
         return new TrackRecordResponse(trackInfoDto, records);
     }
+
     @Transactional
     public MyTrackRecordListResponse getMyTrackRecordResponse(Long trackId) {
         RunningTrack track = trackRepository.findById(trackId)
@@ -182,18 +195,18 @@ public class TrackService {
     public TrackListResponse getAllTrackRecords() {
         List<RunningTrack> allTracks = trackRepository.findAll();
 
-        List<TrackListItemDto> trackListItemDtos = TrackListResponse.convertRunningTracksToTrackListResponse(allTracks);
+        List<TrackListItemDto> trackListItemDtos = TrackListResponse.convertRunningTracksToTrackListItemDto(allTracks);
         trackListItemDtos.sort(Comparator.comparingInt(TrackListItemDto::distance));
         return new TrackListResponse(trackListItemDtos);
     }
 
     @Transactional
-    public TrackPagesResponse getTracksOrderByDistance(int page, int size, double userLon, double userLat) {
+    public TrackPagesResponse getTracksOrderByClose(int page, int size, double userLon, double userLat) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<RunningTrack> tracksPage = trackRepository.findTracksOrderByDistance(
+        Page<RunningTrack> tracksPage = trackRepository.findTracksOrderByClose(
                 userLon, userLat, pageable
         );
-        List<TrackListItemDto> trackListItemDtos = TrackListResponse.convertRunningTracksToTrackListResponse(tracksPage.getContent());
+        List<TrackListItemDto> trackListItemDtos = TrackListResponse.convertRunningTracksToTrackListItemDto(tracksPage.getContent());
         int totalPages = tracksPage.getTotalPages();
         long totalElements = tracksPage.getTotalElements();
         return new TrackPagesResponse(
@@ -204,21 +217,56 @@ public class TrackService {
     }
 
     @Transactional
-    public TrackPagesResponse getUserTracksOrderByDistance(int page, int size, long userId, double userLon, double userLat) {
+    public TrackPagesResponse getUserTracksOrderByClose(int page, int size, long userId, double userLon, double userLat) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_EXIST));
         Pageable pageable = PageRequest.of(page, size);
-        Page<RunningTrack> tracksPage = trackRepository.findUserTracksOrderByDistance(
+        Page<RunningTrack> tracksPage = trackRepository.findUserTracksOrderByClose(
                 userLon, userLat, userId, pageable
         );
-        List<TrackListItemDto> trackListItemDtos = TrackListResponse.convertRunningTracksToTrackListResponse(tracksPage.getContent());
-        int totalPages = tracksPage.getTotalPages();
-        long totalElements = tracksPage.getTotalElements();
-        return new TrackPagesResponse(
-                trackListItemDtos,
-                totalPages,
-                totalElements
-        );
+        return TrackListResponse
+                .convertRunningTracksToTrackPagesResponse(
+                        tracksPage.getContent(),
+                        tracksPage.getTotalPages(),
+                        tracksPage.getTotalElements()
+                );
+    }
+
+    @Transactional
+    public TrackPagesResponse getTracksOrderByTotalDistance(int page, int size, String order) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<RunningTrack> tracksPage;
+        if (order.equals("asc")){
+            tracksPage = trackRepository.findAllByUserIsNullOrderByTotalDistanceAsc(pageable);
+        } else {
+            tracksPage = trackRepository.findAllByUserIsNullOrderByTotalDistanceDesc(pageable);
+        }
+        return TrackListResponse
+                .convertRunningTracksToTrackPagesResponse(
+                        tracksPage.getContent(),
+                        tracksPage.getTotalPages(),
+                        tracksPage.getTotalElements()
+                );
+    }
+
+    @Transactional
+    public TrackPagesResponse getUserTracksOrderByTotalDistance(int page, int size, String order, long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_EXIST));
+        Pageable pageable = PageRequest.of(page, size);
+        Page<RunningTrack> tracksPage;
+        if (order.equals("asc")){
+            tracksPage = trackRepository.findByUserIdOrderByTotalDistanceAsc(userId,pageable);
+        } else {
+            tracksPage = trackRepository.findByUserIdOrderByTotalDistanceDesc(userId,pageable);
+        }
+
+        return TrackListResponse
+                .convertRunningTracksToTrackPagesResponse(
+                        tracksPage.getContent(),
+                        tracksPage.getTotalPages(),
+                        tracksPage.getTotalElements()
+                );
     }
 
     @Async

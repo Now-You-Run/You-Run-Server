@@ -1,5 +1,6 @@
 package com.running.you_run.running.entity;
 
+import com.running.you_run.running.Enum.TrackStatus;
 import com.running.you_run.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -37,4 +38,8 @@ public class RunningTrack {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+    @Column
+    @Enumerated(EnumType.STRING)
+    @Setter
+    private TrackStatus trackStatus;
 }

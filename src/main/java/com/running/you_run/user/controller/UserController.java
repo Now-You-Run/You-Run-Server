@@ -19,6 +19,7 @@ import java.util.Map;
 import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
+import com.running.you_run.user.payload.request.UpdateAveragePaceRequest;
 
 @RestController
 @RequestMapping("/api/user")
@@ -125,5 +126,13 @@ public class UserController {
                 "message", "포인트 전송 기록 조회 성공",
                 "data", response
         ));
+      
+    @PatchMapping("/average-pace")
+    public ResponseEntity<Void> updateAveragePace(
+            @RequestParam Long userId,
+            @RequestBody UpdateAveragePaceRequest req
+    ) {
+        userProfileService.updateAveragePace(userId, req.averagePace());
+        return ResponseEntity.noContent().build();
     }
 }

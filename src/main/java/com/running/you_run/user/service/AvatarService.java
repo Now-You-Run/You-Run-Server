@@ -1,20 +1,24 @@
 package com.running.you_run.user.service;
 
-import com.running.you_run.global.exception.ApiException;
-import com.running.you_run.global.exception.ErrorCode;
 import com.running.you_run.user.entity.Avatar;
 import com.running.you_run.user.entity.User;
 import com.running.you_run.user.entity.UserAvatar;
 import com.running.you_run.user.repository.AvatarRepository;
+import com.running.you_run.user.dto.AvatarWithOwnershipDto;
 import com.running.you_run.user.repository.UserAvatarRepository;
 import com.running.you_run.user.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.HttpStatus;
+import com.running.you_run.global.exception.ApiException;
+import com.running.you_run.global.exception.ErrorCode;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -23,23 +27,14 @@ public class AvatarService {
     private final UserAvatarRepository userAvatarRepository;
     private final UserRepository userRepository;
 
-    // 아바타 + 소유 여부 DTO
-    @Getter
-    @AllArgsConstructor
-    public static class AvatarWithOwnershipDto {
-        private Avatar avatar;
-        private boolean owned;
-    }
 
     // 1. 모든 아바타 목록 조회 (소유 여부 포함)
     public List<AvatarWithOwnershipDto> getAllAvatarsWithOwnership(User user) {
         List<Avatar> avatars = avatarRepository.findAll();
         List<UserAvatar> userAvatars = userAvatarRepository.findByUser(user);
-        // 소유한 아바타 id 집합
         java.util.Set<Long> ownedAvatarIds = userAvatars.stream()
                 .map(ua -> ua.getAvatar().getId())
                 .collect(java.util.stream.Collectors.toSet());
-        // DTO 변환
         return avatars.stream()
                 .map(avatar -> new AvatarWithOwnershipDto(avatar, ownedAvatarIds.contains(avatar.getId())))
                 .toList();
@@ -92,4 +87,10 @@ public class AvatarService {
             ua.setSelected(ua.getAvatar().getId().equals(avatarId));
         });
     }
-} 
+
+    public Avatar getCurrentAvatarByUserId(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_EXIST));
+        return user.getSelectedAvatar();
+    }
+}

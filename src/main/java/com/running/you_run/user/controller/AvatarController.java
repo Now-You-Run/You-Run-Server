@@ -1,11 +1,17 @@
 package com.running.you_run.user.controller;
 
 import com.running.you_run.user.entity.User;
+import com.running.you_run.user.entity.Avatar;
 import com.running.you_run.user.repository.UserRepository;
 import com.running.you_run.user.service.AvatarService;
+import com.running.you_run.user.dto.AvatarWithOwnershipDto;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import com.running.you_run.user.dto.AvatarDto;
 
 import java.util.List;
 
@@ -20,7 +26,7 @@ public class AvatarController {
 
     // 1. 모든 아바타 목록 조회 (소유 여부 포함)
     @GetMapping
-    public ResponseEntity<List<AvatarService.AvatarWithOwnershipDto>> getAllAvatars() {
+    public ResponseEntity<List<AvatarWithOwnershipDto>> getAllAvatars() {
         User user = userRepository.findById(1L).orElseThrow(() -> new RuntimeException("User not found"));
         return ResponseEntity.ok(avatarService.getAllAvatarsWithOwnership(user));
     }
@@ -40,4 +46,27 @@ public class AvatarController {
         avatarService.selectAvatar(user, avatarId);
         return ResponseEntity.ok().build();
     }
+
+
+    @GetMapping("/current")
+    public ResponseEntity<?> getCurrentAvatar() {
+        User user = userRepository.findById(1L)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        Avatar currentAvatar = user.getSelectedAvatar();
+        if (currentAvatar == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("현재 선택된 아바타가 없습니다.");
+        }
+
+        AvatarDto dto = new AvatarDto(
+                currentAvatar.getId(),
+                currentAvatar.getName(),
+                currentAvatar.getImageUrl(),
+                currentAvatar.getGlbUrl(),
+                currentAvatar.getPrice(),
+                currentAvatar.getGender() != null ? currentAvatar.getGender().name() : null
+        );
+        return ResponseEntity.ok(dto);
+    }
+
+
 } 
