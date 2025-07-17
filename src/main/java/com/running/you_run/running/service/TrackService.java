@@ -79,6 +79,7 @@ public class TrackService {
 
         return savedTrack.getId();
     }
+
     @Transactional
     public Long storeServerTrack(RunningTrackStoreRequest request) {
         // 입력 검증
@@ -112,6 +113,7 @@ public class TrackService {
 
         return savedTrack.getId();
     }
+
     @Transactional
     public TrackInfoDto getTrack(Long trackId) {
         RunningTrack track = trackRepository.findById(trackId)
@@ -155,6 +157,7 @@ public class TrackService {
 
         return new TrackRecordResponse(trackInfoDto, records);
     }
+
     @Transactional
     public MyTrackRecordListResponse getMyTrackRecordResponse(Long trackId) {
         RunningTrack track = trackRepository.findById(trackId)
@@ -182,18 +185,18 @@ public class TrackService {
     public TrackListResponse getAllTrackRecords() {
         List<RunningTrack> allTracks = trackRepository.findAll();
 
-        List<TrackListItemDto> trackListItemDtos = TrackListResponse.convertRunningTracksToTrackListResponse(allTracks);
+        List<TrackListItemDto> trackListItemDtos = TrackListResponse.convertRunningTracksToTrackListItemDto(allTracks);
         trackListItemDtos.sort(Comparator.comparingInt(TrackListItemDto::distance));
         return new TrackListResponse(trackListItemDtos);
     }
 
     @Transactional
-    public TrackPagesResponse getTracksOrderByDistance(int page, int size, double userLon, double userLat) {
+    public TrackPagesResponse getTracksOrderByClose(int page, int size, double userLon, double userLat) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<RunningTrack> tracksPage = trackRepository.findTracksOrderByDistance(
+        Page<RunningTrack> tracksPage = trackRepository.findTracksOrderByClose(
                 userLon, userLat, pageable
         );
-        List<TrackListItemDto> trackListItemDtos = TrackListResponse.convertRunningTracksToTrackListResponse(tracksPage.getContent());
+        List<TrackListItemDto> trackListItemDtos = TrackListResponse.convertRunningTracksToTrackListItemDto(tracksPage.getContent());
         int totalPages = tracksPage.getTotalPages();
         long totalElements = tracksPage.getTotalElements();
         return new TrackPagesResponse(
@@ -204,21 +207,45 @@ public class TrackService {
     }
 
     @Transactional
-    public TrackPagesResponse getUserTracksOrderByDistance(int page, int size, long userId, double userLon, double userLat) {
+    public TrackPagesResponse getUserTracksOrderByClose(int page, int size, long userId, double userLon, double userLat) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_EXIST));
         Pageable pageable = PageRequest.of(page, size);
-        Page<RunningTrack> tracksPage = trackRepository.findUserTracksOrderByDistance(
+        Page<RunningTrack> tracksPage = trackRepository.findUserTracksOrderByClose(
                 userLon, userLat, userId, pageable
         );
-        List<TrackListItemDto> trackListItemDtos = TrackListResponse.convertRunningTracksToTrackListResponse(tracksPage.getContent());
-        int totalPages = tracksPage.getTotalPages();
-        long totalElements = tracksPage.getTotalElements();
-        return new TrackPagesResponse(
-                trackListItemDtos,
-                totalPages,
-                totalElements
-        );
+        return TrackListResponse
+                .convertRunningTracksToTrackPagesResponse(
+                        tracksPage.getContent(),
+                        tracksPage.getTotalPages(),
+                        tracksPage.getTotalElements()
+                );
+    }
+
+    @Transactional
+    public TrackPagesResponse getTracksOrderByTotalDistance(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<RunningTrack> tracksPage = trackRepository.findAllByOrderByTotalDistanceAsc(pageable);
+        return TrackListResponse
+                .convertRunningTracksToTrackPagesResponse(
+                        tracksPage.getContent(),
+                        tracksPage.getTotalPages(),
+                        tracksPage.getTotalElements()
+                );
+    }
+
+    @Transactional
+    public TrackPagesResponse getUserTracksOrderByTotalDistance(int page, int size, long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_EXIST));
+        Pageable pageable = PageRequest.of(page, size);
+        Page<RunningTrack> tracksPage = trackRepository.findByUserIdOrderByTotalDistanceAsc(userId,pageable);
+        return TrackListResponse
+                .convertRunningTracksToTrackPagesResponse(
+                        tracksPage.getContent(),
+                        tracksPage.getTotalPages(),
+                        tracksPage.getTotalElements()
+                );
     }
 
     @Async

@@ -80,12 +80,35 @@ public class TrackController {
     ) {
         TrackPagesResponse trackPagesResponse;
         if (userId != null) {
-            trackPagesResponse = trackService.getUserTracksOrderByDistance(
+            trackPagesResponse = trackService.getUserTracksOrderByClose(
                     page, size, userId, userLon, userLat
             );
         } else {
-            trackPagesResponse = trackService.getTracksOrderByDistance(
+            trackPagesResponse = trackService.getTracksOrderByClose(
                     page, size, userLon, userLat
+            );
+        }
+        return Response.ok(trackPagesResponse);
+    }
+
+    @GetMapping("/list/order/dist")
+    @Operation(
+            summary = "총 길이로 정렬된 트랙 목록 불러오기",
+            description = "총 길이로 정렬된 트랙 목록을 불러옵니다. userId가 있으면 사용자 관련 정보를 포함할 수 있습니다."
+    )
+    public ResponseEntity<?> returnAllTracksByClose(
+            @RequestParam int page,
+            @RequestParam int size,
+            @RequestParam(required = false) Long userId
+    ) {
+        TrackPagesResponse trackPagesResponse;
+        if (userId != null) {
+            trackPagesResponse = trackService.getUserTracksOrderByTotalDistance(
+                    page, size, userId
+            );
+        } else {
+            trackPagesResponse = trackService.getTracksOrderByTotalDistance(
+                    page, size
             );
         }
         return Response.ok(trackPagesResponse);

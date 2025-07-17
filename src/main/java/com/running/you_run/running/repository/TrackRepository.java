@@ -1,6 +1,7 @@
 package com.running.you_run.running.repository;
 
 import com.running.you_run.running.entity.RunningTrack;
+import com.running.you_run.user.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -22,7 +23,7 @@ public interface TrackRepository extends JpaRepository<RunningTrack, Long> {
             """,
             countQuery = "SELECT count(*) FROM track",
             nativeQuery = true)
-    Page<RunningTrack> findTracksOrderByDistance(
+    Page<RunningTrack> findTracksOrderByClose(
             @Param("userLon") double userLon,
             @Param("userLat") double userLat,
             Pageable pageable
@@ -40,12 +41,13 @@ public interface TrackRepository extends JpaRepository<RunningTrack, Long> {
             """,
             countQuery = "SELECT count(*) FROM track WHERE user_id = :userId",
             nativeQuery = true)
-    Page<RunningTrack> findUserTracksOrderByDistance(
+    Page<RunningTrack> findUserTracksOrderByClose(
             @Param("userLon") double userLon,
             @Param("userLat") double userLat,
             @Param("userId") long userId,
             Pageable pageable
     );
 
-
+    Page<RunningTrack> findAllByOrderByTotalDistanceAsc(Pageable pageable);
+    Page<RunningTrack> findByUserIdOrderByTotalDistanceAsc(Long userId, Pageable pageable);
 }
