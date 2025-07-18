@@ -112,11 +112,6 @@ public class UserProfileService {
         User receiver = userRepository.findById(receiverId)
                 .orElseThrow(() -> new IllegalArgumentException("Receiver not found"));
 
-        if (sender.getPoint() < point) {
-            throw new IllegalStateException("포인트가 부족합니다.");
-        }
-
-        sender.setPoint(sender.getPoint() - point);
         receiver.setPoint(receiver.getPoint() + point);
 
         // 트랜잭션 기록 저장
