@@ -71,6 +71,7 @@ public class TrackService {
                 .startLongitude(startLongitude)
                 .address(address)
                 .user(user)
+                .trackStatus(TrackStatus.AVAILABLE)
                 .build();
 
         RunningTrack savedTrack = trackRepository.save(track);
@@ -114,6 +115,7 @@ public class TrackService {
                 .startLatitude(startLatitude)
                 .startLongitude(startLongitude)
                 .address(address)
+                .trackStatus(TrackStatus.AVAILABLE)
                 .build();
 
         RunningTrack savedTrack = trackRepository.save(track);
@@ -237,9 +239,9 @@ public class TrackService {
         Pageable pageable = PageRequest.of(page, size);
         Page<RunningTrack> tracksPage;
         if (order.equals("asc")){
-            tracksPage = trackRepository.findAllByUserIsNullOrderByTotalDistanceAsc(pageable);
+            tracksPage = trackRepository.findAllPublicAvailableTracksOrderByTotalDistanceAsc(pageable);
         } else {
-            tracksPage = trackRepository.findAllByUserIsNullOrderByTotalDistanceDesc(pageable);
+            tracksPage = trackRepository.findAllPublicAvailableTracksOrderByTotalDistanceDesc(pageable);
         }
         return TrackListResponse
                 .convertRunningTracksToTrackPagesResponse(
@@ -256,9 +258,9 @@ public class TrackService {
         Pageable pageable = PageRequest.of(page, size);
         Page<RunningTrack> tracksPage;
         if (order.equals("asc")){
-            tracksPage = trackRepository.findByUserIdOrderByTotalDistanceAsc(userId,pageable);
+            tracksPage = trackRepository.findUserAvailableTracksOrderByTotalDistanceAsc(userId,pageable);
         } else {
-            tracksPage = trackRepository.findByUserIdOrderByTotalDistanceDesc(userId,pageable);
+            tracksPage = trackRepository.findUserAvailableTracksOrderByTotalDistanceDesc(userId,pageable);
         }
 
         return TrackListResponse

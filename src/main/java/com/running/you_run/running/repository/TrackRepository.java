@@ -1,7 +1,6 @@
 package com.running.you_run.running.repository;
 
 import com.running.you_run.running.entity.RunningTrack;
-import com.running.you_run.user.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,7 +17,7 @@ public interface TrackRepository extends JpaRepository<RunningTrack, Long> {
                 path::geography
               ) AS distance
             FROM track
-            WHERE user_id IS NULL
+            WHERE user_id IS NULL AND track_status = 'AVAILABLE'
             ORDER BY distance ASC
             """,
             countQuery = "SELECT count(*) FROM track",
@@ -36,7 +35,7 @@ public interface TrackRepository extends JpaRepository<RunningTrack, Long> {
                 path::geography
               ) AS distance
             FROM track
-            WHERE user_id = :userId
+            WHERE user_id = :userId AND track_status = 'AVAILABLE'
             ORDER BY distance ASC
             """,
             countQuery = "SELECT count(*) FROM track WHERE user_id = :userId",
@@ -47,14 +46,16 @@ public interface TrackRepository extends JpaRepository<RunningTrack, Long> {
             @Param("userId") long userId,
             Pageable pageable
     );
-
-    Page<RunningTrack> findAllByUserIsNullOrderByTotalDistanceAsc(Pageable pageable);
-
-    /**
-     * 사용자가 없는(공용) 모든 트랙을 총 거리가 긴 순(내림차순)으로 정렬하여 조회합니다.
-     * RunningTrack 엔티티의 user 필드가 NULL인 것을 조건으로 합니다.
-     */
-    Page<RunningTrack> findAllByUserIsNullOrderByTotalDistanceDesc(Pageable pageable);
-    Page<RunningTrack> findByUserIdOrderByTotalDistanceAsc(Long userId, Pageable pageable);
-    Page<RunningTrack> findByUserIdOrderByTotalDistanceDesc(Long userId, Pageable pageable);
+    @Query("SELECT t FROM RunningTrack t WHERE t.user IS NULL " +
+            "AND t.trackStatus = com.running.you_run.running.Enum.TrackStatus.AVAILABLE ORDER BY t.totalDistance ASC")
+    Page<RunningTrack> findAllPublicAvailableTracksOrderByTotalDistanceAsc(Pageable pageable);
+    @Query("SELECT t FROM RunningTrack t WHERE t.user IS NULL " +
+            "AND t.trackStatus = com.running.you_run.running.Enum.TrackStatus.AVAILABLE ORDER BY t.totalDistance DESC")
+    Page<RunningTrack> findAllPublicAvailableTracksOrderByTotalDistanceDesc(Pageable pageable);
+    @Query("SELECT t FROM RunningTrack t WHERE t.user.id = :userId " +
+            "AND t.trackStatus = com.running.you_run.running.Enum.TrackStatus.AVAILABLE ORDER BY t.totalDistance ASC")
+    Page<RunningTrack> findUserAvailableTracksOrderByTotalDistanceAsc(Long userId, Pageable pageable);
+    @Query("SELECT t FROM RunningTrack t WHERE t.user.id = :userId " +
+            "AND t.trackStatus = com.running.you_run.running.Enum.TrackStatus.AVAILABLE ORDER BY t.totalDistance DESC")
+    Page<RunningTrack> findUserAvailableTracksOrderByTotalDistanceDesc(Long userId, Pageable pageable);
 }
