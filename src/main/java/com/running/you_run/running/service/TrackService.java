@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -234,15 +235,61 @@ public class TrackService {
                 );
     }
 
+//    @Transactional
+//    public TrackPagesResponse getTracksOrderByTotalDistance(int page, int size, String order) {
+//        Pageable pageable = PageRequest.of(page, size);
+//        Page<RunningTrack> tracksPage;
+//        if (order.equals("asc")){
+//            tracksPage = trackRepository.findAllPublicAvailableTracksOrderByTotalDistanceAsc(pageable);
+//        } else {
+//            tracksPage = trackRepository.findAllPublicAvailableTracksOrderByTotalDistanceDesc(pageable);
+//        }
+//        return TrackListResponse
+//                .convertRunningTracksToTrackPagesResponse(
+//                        tracksPage.getContent(),
+//                        tracksPage.getTotalPages(),
+//                        tracksPage.getTotalElements()
+//                );
+//    }
+//
+//    @Transactional
+//    public TrackPagesResponse getUserTracksOrderByTotalDistance(int page, int size, String order, long userId) {
+//        User user = userRepository.findById(userId)
+//                .orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_EXIST));
+//        Pageable pageable = PageRequest.of(page, size);
+//        Page<RunningTrack> tracksPage;
+//        if (order.equals("asc")){
+//            tracksPage = trackRepository.findUserAvailableTracksOrderByTotalDistanceAsc(userId,pageable);
+//        } else {
+//            tracksPage = trackRepository.findUserAvailableTracksOrderByTotalDistanceDesc(userId,pageable);
+//        }
+//
+//        return TrackListResponse
+//                .convertRunningTracksToTrackPagesResponse(
+//                        tracksPage.getContent(),
+//                        tracksPage.getTotalPages(),
+//                        tracksPage.getTotalElements()
+//                );
+//    }
+
     @Transactional
-    public TrackPagesResponse getTracksOrderByTotalDistance(int page, int size, String order) {
-        Pageable pageable = PageRequest.of(page, size);
+    public TrackPagesResponse getUserTracksOrderByTotalDistance(int page, int size, String order, Long userId) {
+        // 1. Sort 객체 생성
+        Sort.Direction direction = order.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Sort sort = Sort.by(direction, "totalDistance"); // 정렬 기준 설정
+
+        // 2. Pageable 객체 생성
+        Pageable pageable = PageRequest.of(page, size, sort); // PageRequest에 Sort 객체 포함
+
         Page<RunningTrack> tracksPage;
-        if (order.equals("asc")){
-            tracksPage = trackRepository.findAllPublicAvailableTracksOrderByTotalDistanceAsc(pageable);
+
+        // 3. userId 유무에 따라 다른 Repository 메소드 호출
+        if (userId != null) {
+            tracksPage = trackRepository.findUserAvailableTracks(userId, pageable);
         } else {
-            tracksPage = trackRepository.findAllPublicAvailableTracksOrderByTotalDistanceDesc(pageable);
+            tracksPage = trackRepository.findAllPublicAvailableTracks(pageable);
         }
+
         return TrackListResponse
                 .convertRunningTracksToTrackPagesResponse(
                         tracksPage.getContent(),
@@ -251,25 +298,6 @@ public class TrackService {
                 );
     }
 
-    @Transactional
-    public TrackPagesResponse getUserTracksOrderByTotalDistance(int page, int size, String order, long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_EXIST));
-        Pageable pageable = PageRequest.of(page, size);
-        Page<RunningTrack> tracksPage;
-        if (order.equals("asc")){
-            tracksPage = trackRepository.findUserAvailableTracksOrderByTotalDistanceAsc(userId,pageable);
-        } else {
-            tracksPage = trackRepository.findUserAvailableTracksOrderByTotalDistanceDesc(userId,pageable);
-        }
-
-        return TrackListResponse
-                .convertRunningTracksToTrackPagesResponse(
-                        tracksPage.getContent(),
-                        tracksPage.getTotalPages(),
-                        tracksPage.getTotalElements()
-                );
-    }
 
     @Async
     public void generateAndUploadThumbnailAsync(Long trackId, List<CoordinateDto> trackPoints) {

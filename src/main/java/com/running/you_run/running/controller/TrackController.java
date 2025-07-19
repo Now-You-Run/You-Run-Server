@@ -113,16 +113,9 @@ public class TrackController {
             @RequestParam String order,
             @RequestParam(required = false) Long userId
     ) {
-        TrackPagesResponse trackPagesResponse;
-        if (userId != null) {
-            trackPagesResponse = trackService.getUserTracksOrderByTotalDistance(
-                    page, size, order,userId
-            );
-        } else {
-            trackPagesResponse = trackService.getTracksOrderByTotalDistance(
-                    page, size, order
-            );
-        }
+        TrackPagesResponse trackPagesResponse = trackService.getUserTracksOrderByTotalDistance(
+                page, size, order,userId
+        );
         return Response.ok(trackPagesResponse);
     }
 
