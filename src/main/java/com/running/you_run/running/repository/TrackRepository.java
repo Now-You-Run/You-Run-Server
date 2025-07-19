@@ -20,7 +20,7 @@ public interface TrackRepository extends JpaRepository<RunningTrack, Long> {
             WHERE user_id IS NULL AND track_status = 'AVAILABLE'
             ORDER BY distance ASC, id ASC
             """,
-            countQuery = "SELECT count(*) FROM track AND track_status = 'AVAILABLE'",
+            countQuery = "SELECT count(*) FROM track WHERE user_id IS NULL AND track_status = 'AVAILABLE'",
             nativeQuery = true)
     Page<RunningTrack> findTracksOrderByClose(
             @Param("userLon") double userLon,
