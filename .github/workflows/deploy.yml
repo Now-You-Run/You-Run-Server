@@ -34,6 +34,10 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
+      # 캐시 기능을 지원하는 빌드 환경을 설정합니다.
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       # 4. 이미지 태그들을 정의합니다.
       # 고유 태그(Git SHA)와 latest 태그를 모두 사용합니다.
       - name: Define image tags
