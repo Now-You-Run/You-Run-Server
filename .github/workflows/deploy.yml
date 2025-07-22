@@ -10,6 +10,7 @@ on:
 env:
   AWS_REGION: ap-northeast-2  # 본인의 AWS 리전으로 변경하세요.
   ECR_REPOSITORY: you-run # 본인의 ECR 리포지토리 이름으로 변경하세요.
+  ECR_REPOSITORY_NGINX: you-run-nginx
   COMPOSE_FILE_PATH: /home/ubuntu/ # 서버에 docker-compose.yml 파일이 있는 경로
 
 jobs:
@@ -58,4 +59,14 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
+      - name: Build and push Nginx image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./nginx  # nginx 서브 디렉토리를 컨텍스트로 사용
+          push: true
+          tags: |
+            ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY_NGINX }}:${{ github.sha }}
+            ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY_NGINX }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
