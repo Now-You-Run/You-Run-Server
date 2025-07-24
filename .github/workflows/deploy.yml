@@ -12,6 +12,7 @@ env:
   ECR_REPOSITORY: you-run # 본인의 ECR 리포지토리 이름으로 변경하세요.
   ECR_REPOSITORY_NGINX: you-run-nginx
   COMPOSE_FILE_PATH: /home/ubuntu/ # 서버에 docker-compose.yml 파일이 있는 경로
+  ASG_NAME: yourun-product-test
 
 jobs:
   # 1. Docker 이미지를 빌드하고 ECR에 푸시하는 Job
@@ -69,4 +70,55 @@ jobs:
             ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY_NGINX }}:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    steps:
+      # 2.1 AWS 자격 증명을 설정합니다.
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
 
+      # 2.2 Auto Scaling Group의 인스턴스 새로 고침을 시작하고 완료까지 대기합니다.
+      - name: Start and wait for instance refresh
+        run: |
+          echo "Starting instance refresh for ASG: ${{ env.ASG_NAME }}"
+          
+          # 인스턴스 새로 고침을 시작하고, 고유한 Refresh ID를 변수에 저장합니다.
+          REFRESH_ID=$(aws autoscaling start-instance-refresh \
+            --auto-scaling-group-name ${{ env.ASG_NAME }} \
+            --strategy Rolling \
+            --query 'InstanceRefreshId' --output text)
+  
+          if [ -z "$REFRESH_ID" ]; then
+            echo "::error::Failed to start instance refresh."
+            exit 1
+          fi
+          
+          echo "Instance refresh started with ID: $REFRESH_ID"
+          
+          # 새로 고침이 완료될 때까지 30초 간격으로 상태를 확인합니다. (최대 10분 대기)
+          for i in {1..20}; do
+            STATUS=$(aws autoscaling describe-instance-refreshes \
+              --auto-scaling-group-name ${{ env.ASG_NAME }} \
+              --instance-refresh-ids $REFRESH_ID \
+              --query 'InstanceRefreshes[0].Status' --output text)
+          
+            echo "Current refresh status: $STATUS"
+          
+            if [ "$STATUS" == "Successful" ]; then
+              echo "Instance refresh completed successfully."
+              exit 0
+            elif [ "$STATUS" == "Failed" ] || [ "$STATUS" == "Cancelled" ] || [ "$STATUS" == "RollbackSuccessful" ]; then
+              echo "::error::Instance refresh did not complete successfully. Status: $STATUS"
+              exit 1
+            fi
+          
+            sleep 30
+          done
+          
+          echo "::error::Instance refresh timed out after 10 minutes."
+          exit 1
