@@ -26,31 +26,41 @@ public class AvatarController {
 
     // 1. 모든 아바타 목록 조회 (소유 여부 포함)
     @GetMapping
-    public ResponseEntity<List<AvatarWithOwnershipDto>> getAllAvatars() {
-        User user = userRepository.findById(1L).orElseThrow(() -> new RuntimeException("User not found"));
+    public ResponseEntity<List<AvatarWithOwnershipDto>> getAllAvatars(
+            @RequestParam Long userId
+    ) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
         return ResponseEntity.ok(avatarService.getAllAvatarsWithOwnership(user));
     }
 
     // 2. 아바타 구매
     @PostMapping("/{avatarId}/purchase")
-    public ResponseEntity<Void> purchaseAvatar(@PathVariable Long avatarId) {
-        User user = userRepository.findById(1L).orElseThrow(() -> new RuntimeException("User not found"));
+    public ResponseEntity<Void> purchaseAvatar(
+            @PathVariable Long avatarId,
+            @RequestParam Long userId
+    ) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
         avatarService.purchaseAvatar(user, avatarId);
         return ResponseEntity.ok().build();
     }
 
     // 3. 선택 아바타 변경
     @PostMapping("/{avatarId}/select")
-    public ResponseEntity<Void> selectAvatar(@PathVariable Long avatarId) {
-        User user = userRepository.findById(1L).orElseThrow(() -> new RuntimeException("User not found"));
+    public ResponseEntity<Void> selectAvatar(
+            @PathVariable Long avatarId,
+            @RequestParam Long userId
+    ) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
         avatarService.selectAvatar(user, avatarId);
         return ResponseEntity.ok().build();
     }
 
 
     @GetMapping("/current")
-    public ResponseEntity<?> getCurrentAvatar() {
-        User user = userRepository.findById(1L)
+    public ResponseEntity<?> getCurrentAvatar(
+            @RequestParam Long userId
+    ) {
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         Avatar currentAvatar = user.getSelectedAvatar();
         if (currentAvatar == null) {
