@@ -28,7 +28,9 @@ public enum ErrorCode {
     AVATAR_NOT_EXIST(HttpStatus.BAD_REQUEST, "720-1", "존재하지 않는 아바타입니다."),
     AVATAR_ALREADY_OWNED(HttpStatus.BAD_REQUEST, "720-2", "이미 소유한 아바타입니다."),
     AVATAR_INSUFFICIENT_POINT(HttpStatus.BAD_REQUEST, "720-3", "포인트가 부족합니다."),
-    AVATAR_NOT_OWNED(HttpStatus.BAD_REQUEST, "720-4", "소유하지 않은 아바타는 선택할 수 없습니다.");
+    AVATAR_NOT_OWNED(HttpStatus.BAD_REQUEST, "720-4", "소유하지 않은 아바타는 선택할 수 없습니다."),
+    AVATAR_NOT_SELECTED(HttpStatus.NOT_FOUND,      "720-5", "현재 선택된 아바타가 없습니다.");
+
     private final HttpStatus httpStatus;
     private final String code;
     private final String message;
