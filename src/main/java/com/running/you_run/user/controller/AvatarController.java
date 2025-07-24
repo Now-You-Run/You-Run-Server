@@ -57,26 +57,9 @@ public class AvatarController {
 
 
     @GetMapping("/current")
-    public ResponseEntity<?> getCurrentAvatar(
-            @RequestParam Long userId
-    ) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        Avatar currentAvatar = user.getSelectedAvatar();
-        if (currentAvatar == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("현재 선택된 아바타가 없습니다.");
-        }
-
-        AvatarDto dto = new AvatarDto(
-                currentAvatar.getId(),
-                currentAvatar.getName(),
-                currentAvatar.getImageUrl(),
-                currentAvatar.getGlbUrl(),
-                currentAvatar.getPrice(),
-                currentAvatar.getGender() != null ? currentAvatar.getGender().name() : null
-        );
+    public ResponseEntity<AvatarDto> getCurrentAvatar(@RequestParam Long userId) {
+        AvatarDto dto = avatarService.getCurrentAvatar(userId);
         return ResponseEntity.ok(dto);
     }
-
 
 } 

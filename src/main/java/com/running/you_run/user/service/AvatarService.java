@@ -16,6 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
 import com.running.you_run.global.exception.ApiException;
 import com.running.you_run.global.exception.ErrorCode;
+import com.running.you_run.user.dto.AvatarDto;
 
 import java.util.List;
 import java.util.Optional;
@@ -87,6 +88,30 @@ public class AvatarService {
             ua.setSelected(ua.getAvatar().getId().equals(avatarId));
         });
     }
+
+    @Transactional(readOnly = true)
+    public AvatarDto getCurrentAvatar(Long userId) {
+        // 1) 트랜잭션 내에서 User 조회 (managed 상태)
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_EXIST));
+
+        // 2) user_avatar에서 selected=true인 레코드 조회
+        UserAvatar ua = userAvatarRepository
+                .findByUserAndSelectedTrue(user)
+                .orElseThrow(() -> new ApiException(ErrorCode.AVATAR_NOT_SELECTED));
+
+        // 3) Avatar 를 DTO로 변환
+        Avatar a = ua.getAvatar();
+        return new AvatarDto(
+                a.getId(),
+                a.getName(),
+                a.getImageUrl(),
+                a.getGlbUrl(),
+                a.getPrice(),
+                a.getGender() != null ? a.getGender().name() : null
+        );
+    }
+
 
     public Avatar getCurrentAvatarByUserId(Long userId) {
         User user = userRepository.findById(userId)
