@@ -6,6 +6,7 @@ FROM gradle:jdk17 as builder
 WORKDIR /home/gradle/src
 COPY . .
 
+RUN apt-get update && apt-get install -y curl
 # 여기서 Spring Boot 애플리케이션을 빌드합니다! (.jar 파일 생성)
 # 이 명령은 GitHub Actions 러너가 아닌, 이 'builder' 컨테이너 내부에서 실행됩니다.
 RUN gradle build -x test --no-daemon
