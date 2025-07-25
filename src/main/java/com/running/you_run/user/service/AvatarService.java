@@ -75,69 +75,43 @@ public class AvatarService {
     }
 
     // 4. 선택 아바타 변경
-//    @Transactional
-//    public void selectAvatar(User user, Long avatarId) {
-//        Avatar avatar = avatarRepository.findById(avatarId)
-//                .orElseThrow(() -> new ApiException(ErrorCode.AVATAR_NOT_EXIST));
-//        UserAvatar userAvatar = userAvatarRepository.findByUserAndAvatar(user, avatar)
-//                .orElseThrow(() -> new ApiException(ErrorCode.AVATAR_NOT_OWNED));
-//        // User의 선택 아바타 변경
-//        user.setSelectedAvatar(avatar);
-//        // 모든 UserAvatar의 selected false로 초기화 후, 해당 아바타만 true
-//        userAvatarRepository.findByUser(user).forEach(ua -> {
-//            ua.setSelected(ua.getAvatar().getId().equals(avatarId));
-//        });
-//    }
     @Transactional
     public void selectAvatar(User user, Long avatarId) {
         Avatar avatar = avatarRepository.findById(avatarId)
                 .orElseThrow(() -> new ApiException(ErrorCode.AVATAR_NOT_EXIST));
-        // 이미 소유한 아바타인지 확인 (기존대로)
-        if (userAvatarRepository.findByUserAndAvatar(user, avatar).isEmpty()) {
-            throw new ApiException(ErrorCode.AVATAR_NOT_OWNED);
-        }
-        // 대표 아바타만 바꾼다!
+        UserAvatar userAvatar = userAvatarRepository.findByUserAndAvatar(user, avatar)
+                .orElseThrow(() -> new ApiException(ErrorCode.AVATAR_NOT_OWNED));
+        // User의 선택 아바타 변경
         user.setSelectedAvatar(avatar);
-        userRepository.save(user);
+        // 모든 UserAvatar의 selected false로 초기화 후, 해당 아바타만 true
+        userAvatarRepository.findByUser(user).forEach(ua -> {
+            ua.setSelected(ua.getAvatar().getId().equals(avatarId));
+        });
     }
-//    @Transactional(readOnly = true)
-//    public AvatarDto getCurrentAvatar(Long userId) {
-//        // 1) 트랜잭션 내에서 User 조회 (managed 상태)
-//        User user = userRepository.findById(userId)
-//                .orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_EXIST));
-//
-//        // 2) user_avatar에서 selected=true인 레코드 조회
-//        UserAvatar ua = userAvatarRepository
-//                .findByUserAndSelectedTrue(user)
-//                .orElseThrow(() -> new ApiException(ErrorCode.AVATAR_NOT_SELECTED));
-//
-//        // 3) Avatar 를 DTO로 변환
-//        Avatar a = ua.getAvatar();
-//        return new AvatarDto(
-//                a.getId(),
-//                a.getName(),
-//                a.getImageUrl(),
-//                a.getGlbUrl(),
-//                a.getPrice(),
-//                a.getGender() != null ? a.getGender().name() : null
-//        );
-//    }
 
     @Transactional(readOnly = true)
     public AvatarDto getCurrentAvatar(Long userId) {
+        // 1) 트랜잭션 내에서 User 조회 (managed 상태)
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_EXIST));
-        Avatar avatar = user.getSelectedAvatar();
-        if (avatar == null) throw new ApiException(ErrorCode.AVATAR_NOT_SELECTED);
+
+        // 2) user_avatar에서 selected=true인 레코드 조회
+        UserAvatar ua = userAvatarRepository
+                .findByUserAndSelectedTrue(user)
+                .orElseThrow(() -> new ApiException(ErrorCode.AVATAR_NOT_SELECTED));
+
+        // 3) Avatar 를 DTO로 변환
+        Avatar a = ua.getAvatar();
         return new AvatarDto(
-                avatar.getId(),
-                avatar.getName(),
-                avatar.getImageUrl(),
-                avatar.getGlbUrl(),
-                avatar.getPrice(),
-                avatar.getGender() != null ? avatar.getGender().name() : null
+                a.getId(),
+                a.getName(),
+                a.getImageUrl(),
+                a.getGlbUrl(),
+                a.getPrice(),
+                a.getGender() != null ? a.getGender().name() : null
         );
     }
+
 
 
     public Avatar getCurrentAvatarByUserId(Long userId) {
