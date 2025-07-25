@@ -274,16 +274,21 @@ public class TrackService {
 
     @Transactional
     public TrackPagesResponse getUserTracksOrderByTotalDistance(int page, int size, String order, Long userId) {
-        // 1. Sort 객체 생성
+        // 1. Sort 객체 생성 시, 고유한 tie-breaker 추가
         Sort.Direction direction = order.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
-        Sort sort = Sort.by(direction, "totalDistance"); // 정렬 기준 설정
 
-        // 2. Pageable 객체 생성
-        Pageable pageable = PageRequest.of(page, size, sort); // PageRequest에 Sort 객체 포함
+        // 기본 정렬 기준(totalDistance)과 tie-breaker(id)를 함께 설정
+        Sort sort = Sort.by(
+                new Sort.Order(direction, "totalDistance"), // 1차 정렬 기준
+                Sort.Order.asc("id")                       // 2차 정렬 기준 (항상 오름차순 또는 내림차순으로 일관성 유지)
+        );
+
+        // 2. Pageable 객체 생성 (이전과 동일)
+        Pageable pageable = PageRequest.of(page, size, sort);
 
         Page<RunningTrack> tracksPage;
 
-        // 3. userId 유무에 따라 다른 Repository 메소드 호출
+        // 3. Repository 메소드 호출 (이전과 동일)
         if (userId != null) {
             tracksPage = trackRepository.findUserAvailableTracks(userId, pageable);
         } else {
@@ -297,6 +302,7 @@ public class TrackService {
                         tracksPage.getTotalElements()
                 );
     }
+
 
 
     @Async
