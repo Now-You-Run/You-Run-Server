@@ -86,6 +86,7 @@ public class AvatarService {
         // 모든 UserAvatar의 selected false로 초기화 후, 해당 아바타만 true
         userAvatarRepository.findByUser(user).forEach(ua -> {
             ua.setSelected(ua.getAvatar().getId().equals(avatarId));
+            userAvatarRepository.save(ua);
         });
     }
 
