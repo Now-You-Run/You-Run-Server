@@ -15,7 +15,6 @@ import com.running.you_run.running.repository.RecordRepository;
 import com.running.you_run.running.repository.TrackRepository;
 import com.running.you_run.user.entity.User;
 import com.running.you_run.user.repository.UserRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,6 +24,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
 import java.util.List;
@@ -41,9 +41,12 @@ public class TrackService {
     private final KakaoGeoService kakaoGeoService;
     private final StaticMapService staticMapService;
     private final S3UploadService s3UploadService;
+    private final TrackInfoService trackInfoService;
 
     @Value("${aws.s3.bucket-name}")
     private String bucketName;
+
+    private final int TRACK_CACHE_TOTAL_DISTANCE_STANDARD = 10000;
 
     @Transactional
     public Long storeTrack(RunningTrackStoreRequest request) {
@@ -136,8 +139,14 @@ public class TrackService {
 
     @Transactional
     public TrackRecordResponse getServerTrackRecordResponse(Long trackId) {
-        RunningTrack track = trackRepository.findById(trackId)
+        int trackTotalDistance = trackRepository.findTotalDistanceById(trackId)
                 .orElseThrow(() -> new ApiException(ErrorCode.TRACK_NOT_EXIST));
+        TrackInfoDto trackInfoDto;
+        if (trackTotalDistance >= TRACK_CACHE_TOTAL_DISTANCE_STANDARD){
+            trackInfoDto = trackInfoService.getCacheTrackInfo(trackId);
+        } else {
+            trackInfoDto = trackInfoService.getTrackInfo(trackId);
+        }
 
         List<Record> recordEntities = recordRepository
                 .findByTrackIdAndIsPersonalBestTrueOrderByResultTimeAsc(trackId);
@@ -165,8 +174,6 @@ public class TrackService {
                     );
                 })
                 .collect(Collectors.toList());
-
-        TrackInfoDto trackInfoDto = TrackInfoDto.convertToResponseDto(track);
 
         return new TrackRecordResponse(trackInfoDto, records);
     }
@@ -234,43 +241,6 @@ public class TrackService {
                         tracksPage.getTotalElements()
                 );
     }
-
-//    @Transactional
-//    public TrackPagesResponse getTracksOrderByTotalDistance(int page, int size, String order) {
-//        Pageable pageable = PageRequest.of(page, size);
-//        Page<RunningTrack> tracksPage;
-//        if (order.equals("asc")){
-//            tracksPage = trackRepository.findAllPublicAvailableTracksOrderByTotalDistanceAsc(pageable);
-//        } else {
-//            tracksPage = trackRepository.findAllPublicAvailableTracksOrderByTotalDistanceDesc(pageable);
-//        }
-//        return TrackListResponse
-//                .convertRunningTracksToTrackPagesResponse(
-//                        tracksPage.getContent(),
-//                        tracksPage.getTotalPages(),
-//                        tracksPage.getTotalElements()
-//                );
-//    }
-//
-//    @Transactional
-//    public TrackPagesResponse getUserTracksOrderByTotalDistance(int page, int size, String order, long userId) {
-//        User user = userRepository.findById(userId)
-//                .orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_EXIST));
-//        Pageable pageable = PageRequest.of(page, size);
-//        Page<RunningTrack> tracksPage;
-//        if (order.equals("asc")){
-//            tracksPage = trackRepository.findUserAvailableTracksOrderByTotalDistanceAsc(userId,pageable);
-//        } else {
-//            tracksPage = trackRepository.findUserAvailableTracksOrderByTotalDistanceDesc(userId,pageable);
-//        }
-//
-//        return TrackListResponse
-//                .convertRunningTracksToTrackPagesResponse(
-//                        tracksPage.getContent(),
-//                        tracksPage.getTotalPages(),
-//                        tracksPage.getTotalElements()
-//                );
-//    }
 
     @Transactional
     public TrackPagesResponse getUserTracksOrderByTotalDistance(int page, int size, String order, Long userId) {
@@ -342,4 +312,5 @@ public class TrackService {
             log.error("기본 썸네일 설정도 실패 - Track ID: {}", trackId, e);
         }
     }
+
 }

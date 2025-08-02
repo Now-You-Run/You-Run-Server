@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface TrackRepository extends JpaRepository<RunningTrack, Long> {
     @Query(value = """
@@ -46,20 +48,9 @@ public interface TrackRepository extends JpaRepository<RunningTrack, Long> {
             @Param("userId") long userId,
             Pageable pageable
     );
-//    @Query("SELECT t FROM RunningTrack t WHERE t.user IS NULL " +
-//            "AND t.trackStatus = com.running.you_run.running.Enum.TrackStatus.AVAILABLE ORDER BY t.totalDistance ASC")
-//    Page<RunningTrack> findAllPublicAvailableTracksOrderByTotalDistanceAsc(Pageable pageable);
-//    @Query("SELECT t FROM RunningTrack t WHERE t.user IS NULL " +
-//            "AND t.trackStatus = com.running.you_run.running.Enum.TrackStatus.AVAILABLE ORDER BY t.totalDistance DESC")
-//    Page<RunningTrack> findAllPublicAvailableTracksOrderByTotalDistanceDesc(Pageable pageable);
-//    @Query("SELECT t FROM RunningTrack t WHERE t.user.id = :userId " +
-//            "AND t.trackStatus = com.running.you_run.running.Enum.TrackStatus.AVAILABLE ORDER BY t.totalDistance ASC")
-//    Page<RunningTrack> findUserAvailableTracksOrderByTotalDistanceAsc(Long userId, Pageable pageable);
-//    @Query("SELECT t FROM RunningTrack t WHERE t.user.id = :userId " +
-//            "AND t.trackStatus = com.running.you_run.running.Enum.TrackStatus.AVAILABLE ORDER BY t.totalDistance DESC")
-//    Page<RunningTrack> findUserAvailableTracksOrderByTotalDistanceDesc(Long userId, Pageable pageable);
 
-
+    @Query("SELECT t.totalDistance FROM RunningTrack t WHERE t.id = :trackId")
+    Optional<Integer> findTotalDistanceById(@Param("trackId") long trackId);
 
     @Query(value = "SELECT t FROM RunningTrack t WHERE t.user IS NULL AND t.trackStatus = com.running.you_run.running.Enum.TrackStatus.AVAILABLE",
             countQuery = "SELECT count(t) FROM RunningTrack t WHERE t.user IS NULL AND t.trackStatus = com.running.you_run.running.Enum.TrackStatus.AVAILABLE")

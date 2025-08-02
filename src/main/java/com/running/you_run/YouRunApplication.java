@@ -3,11 +3,13 @@ package com.running.you_run;
 import jakarta.annotation.PostConstruct;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.annotation.EnableCaching;
 
 import java.util.Date;
 import java.util.TimeZone;
 
 @SpringBootApplication
+@EnableCaching
 public class YouRunApplication {
 	@PostConstruct
 	public void started() {
