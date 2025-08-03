@@ -18,7 +18,7 @@ public class TrackInfoService {
     public TrackInfoDto getCacheTrackInfo(Long trackId) {
         RunningTrack track = trackRepository.findById(trackId)
                 .orElseThrow(() -> new ApiException(ErrorCode.TRACK_NOT_EXIST));
-        return TrackInfoDto.convertToResponseDto(track);
+        return TrackInfoDto.convertToSimplifiedResponseDto(track);
     }
 
     public TrackInfoDto getTrackInfo(Long trackId){

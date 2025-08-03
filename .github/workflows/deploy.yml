@@ -101,7 +101,7 @@ jobs:
           echo "Instance refresh started with ID: $REFRESH_ID"
           
           # 새로 고침이 완료될 때까지 30초 간격으로 상태를 확인합니다. (최대 10분 대기)
-          for i in {1..20}; do
+          for i in {1..40}; do
             STATUS=$(aws autoscaling describe-instance-refreshes \
               --auto-scaling-group-name ${{ env.ASG_NAME }} \
               --instance-refresh-ids $REFRESH_ID \
